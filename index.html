@@ -13,6 +13,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- Cliente Supabase (armazenamento em nuvem, acesso público sem login). Versão fixada por segurança. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/dist/umd/supabase.js"></script>
+
 <style>
 /* =======================================================================
    PALETA OFICIAL DA FACULDADE FCO
@@ -591,7 +594,7 @@ table.tabela-gestao tr.linha-emprestimo:hover td{ background: rgba(0,99,242,0.06
   <header class="header-card">
     <div class="header-title">
       <h1>Painel de Gestão de Empréstimos — TI</h1>
-      <p>Consulte, filtre e finalize devoluções dos empréstimos registrados neste navegador.</p>
+      <p>Consulte, filtre e finalize devoluções dos empréstimos — dados compartilhados em tempo real entre todos os computadores da TI.</p>
     </div>
   </header>
 
@@ -649,98 +652,85 @@ table.tabela-gestao tr.linha-emprestimo:hover td{ background: rgba(0,99,242,0.06
 
 <script>
 /* =========================================================================
-   ESTADO GERAL E BANCO DE DADOS (IndexedDB)
+   ESTADO GERAL E BANCO DE DADOS (Supabase — acesso público, sem login)
    ========================================================================= */
-const DB_NOME = 'fco_emprestimos_ti_db';
-const DB_VERSAO = 1;
-let db = null;
+// CONEXÃO: para apontar este formulário para outro projeto Supabase, troque a URL e a chave
+// publicável abaixo (Project Settings > API Keys no painel do Supabase). A chave publicável
+// é segura para expor no navegador: o controle de acesso real é feito pelas políticas de
+// Row Level Security (RLS) configuradas na tabela "emprestimos".
+const SUPABASE_URL = 'https://jjjqklbdtntknoyidutz.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_KvWMWcthbmNdgtRUkCjLBw_5BBLxJ_X';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
 let eqRowSeq = 0;                 // gerador de ids únicos para linhas de equipamento
 const conferenciaDevolucaoDados = {}; // cache: uid da linha -> {estado, obs}
 let registroAtualId = null;       // id do registro carregado (null = novo empréstimo)
 let registroAtualCodigo = null;
 let registroAtualDataEmissao = null;
-let todosRegistros = [];          // cache local para o painel de gestão
-
-function abrirBanco(){
-  return new Promise((resolve, reject)=>{
-    const req = indexedDB.open(DB_NOME, DB_VERSAO);
-    req.onupgradeneeded = (ev)=>{
-      const _db = ev.target.result;
-      if(!_db.objectStoreNames.contains('emprestimos')){
-        const store = _db.createObjectStore('emprestimos', { keyPath:'id', autoIncrement:true });
-        store.createIndex('status', 'status', { unique:false });
-        store.createIndex('nomeSolicitante', 'solicitante.nome', { unique:false });
-      }
-      if(!_db.objectStoreNames.contains('contadores')){
-        _db.createObjectStore('contadores', { keyPath:'nome' });
-      }
-    };
-    req.onsuccess = (ev)=>{ db = ev.target.result; resolve(db); };
-    req.onerror = (ev)=>{ reject(ev.target.error); };
-  });
-}
-
-function txStore(nome, modo){
-  return db.transaction(nome, modo).objectStore(nome);
-}
-
-function proximoCodigoPreview(){
-  return new Promise((resolve)=>{
-    const store = txStore('contadores','readonly');
-    const req = store.get('emprestimo');
-    req.onsuccess = ()=>{
-      const valor = req.result ? req.result.valor : 0;
-      resolve(formatarCodigo(valor+1));
-    };
-    req.onerror = ()=> resolve(formatarCodigo(1));
-  });
-}
-
-function incrementarContadorEGerarCodigo(){
-  return new Promise((resolve, reject)=>{
-    const tx = db.transaction('contadores','readwrite');
-    const store = tx.objectStore('contadores');
-    const req = store.get('emprestimo');
-    req.onsuccess = ()=>{
-      const atual = req.result ? req.result.valor : 0;
-      const novo = atual + 1;
-      store.put({ nome:'emprestimo', valor:novo });
-      tx.oncomplete = ()=> resolve(formatarCodigo(novo));
-      tx.onerror = ()=> reject(tx.error);
-    };
-    req.onerror = ()=> reject(req.error);
-  });
-}
+let todosRegistros = [];          // cache local (última lista carregada) para o painel de gestão
 
 function formatarCodigo(n){
   return 'EMP-' + String(n).padStart(6,'0');
 }
 
-function salvarRegistro(registro){
-  return new Promise((resolve, reject)=>{
-    const store = txStore('emprestimos','readwrite');
-    const req = registro.id ? store.put(registro) : store.add(registro);
-    req.onsuccess = ()=> resolve(req.result);
-    req.onerror = ()=> reject(req.error);
-  });
+// O código (EMP-000123) e a data de emissão são gerados pelo banco — aqui é só uma prévia
+// aproximada, exibida antes de salvar; o valor definitivo vem da resposta do Supabase.
+async function proximoCodigoPreview(){
+  const { data, error } = await supabaseClient
+    .from('emprestimos').select('id').order('id', { ascending:false }).limit(1);
+  if(error || !data || data.length === 0) return formatarCodigo(1);
+  return formatarCodigo(data[0].id + 1);
 }
 
-function listarRegistros(){
-  return new Promise((resolve, reject)=>{
-    const store = txStore('emprestimos','readonly');
-    const req = store.getAll();
-    req.onsuccess = ()=> resolve(req.result || []);
-    req.onerror = ()=> reject(req.error);
-  });
+function registroParaLinhaDB(registro){
+  return {
+    status: registro.status,
+    solicitante: registro.solicitante,
+    equipamentos: registro.equipamentos,
+    periodo: registro.periodo,
+    termo_aceito: registro.termoAceito,
+    entrega: registro.entrega,
+    devolucao: registro.devolucao
+  };
 }
 
-function obterRegistroPorId(id){
-  return new Promise((resolve, reject)=>{
-    const store = txStore('emprestimos','readonly');
-    const req = store.get(id);
-    req.onsuccess = ()=> resolve(req.result || null);
-    req.onerror = ()=> reject(req.error);
-  });
+function linhaDBParaRegistro(linha){
+  return {
+    id: linha.id,
+    codigo: linha.codigo,
+    dataEmissao: linha.data_emissao,
+    status: linha.status,
+    solicitante: linha.solicitante || {},
+    equipamentos: linha.equipamentos || [],
+    periodo: linha.periodo || {},
+    termoAceito: linha.termo_aceito,
+    entrega: linha.entrega || {},
+    devolucao: linha.devolucao || {}
+  };
+}
+
+async function salvarRegistro(registro){
+  const payload = registroParaLinhaDB(registro);
+  const consulta = registro.id
+    ? supabaseClient.from('emprestimos').update(payload).eq('id', registro.id).select().single()
+    : supabaseClient.from('emprestimos').insert(payload).select().single();
+  const { data, error } = await consulta;
+  if(error) throw error;
+  return linhaDBParaRegistro(data);
+}
+
+async function listarRegistros(){
+  const { data, error } = await supabaseClient
+    .from('emprestimos').select('*').order('data_emissao', { ascending:false });
+  if(error) throw error;
+  return data.map(linhaDBParaRegistro);
+}
+
+async function obterRegistroPorId(id){
+  const { data, error } = await supabaseClient
+    .from('emprestimos').select('*').eq('id', id).single();
+  if(error) throw error;
+  return linhaDBParaRegistro(data);
 }
 
 /* =========================================================================
@@ -1182,27 +1172,20 @@ document.getElementById('formEmprestimo').addEventListener('submit', async (ev)=
   }
   try{
     const registro = coletarRegistroDoFormulario();
-    const ehNovo = !registro.id;
+    const salvo = await salvarRegistro(registro);
 
-    if(ehNovo){
-      registro.codigo = await incrementarContadorEGerarCodigo();
-      registro.dataEmissao = registroAtualDataEmissao || new Date().toISOString();
-    }
-    if(!registro.id) delete registro.id;
+    registroAtualId = salvo.id;
+    registroAtualCodigo = salvo.codigo;
+    registroAtualDataEmissao = salvo.dataEmissao;
 
-    const idSalvo = await salvarRegistro(registro);
-    registroAtualId = idSalvo;
-    registroAtualCodigo = registro.codigo;
-    registroAtualDataEmissao = registro.dataEmissao;
+    document.getElementById('campoCodigoEmprestimo').textContent = salvo.codigo;
+    document.getElementById('campoDataEmissao').textContent = formatarDataHoraBR(salvo.dataEmissao);
 
-    document.getElementById('campoCodigoEmprestimo').textContent = registro.codigo;
-    document.getElementById('campoDataEmissao').textContent = formatarDataHoraBR(registro.dataEmissao);
-
-    mostrarToast(`Empréstimo ${registro.codigo} salvo com sucesso.`);
+    mostrarToast(`Empréstimo ${salvo.codigo} salvo com sucesso.`);
     await carregarEmprestimos();
   }catch(err){
     console.error(err);
-    mostrarToast('Erro ao salvar o empréstimo. Veja o console para detalhes.', 'erro');
+    mostrarToast('Erro ao salvar o empréstimo. Verifique sua conexão com a internet e tente novamente.', 'erro');
   }
 });
 
@@ -1210,8 +1193,13 @@ document.getElementById('formEmprestimo').addEventListener('submit', async (ev)=
    PAINEL DE GESTÃO
    ========================================================================= */
 async function carregarEmprestimos(){
-  todosRegistros = await listarRegistros();
-  renderizarTabelaGestao();
+  try{
+    todosRegistros = await listarRegistros();
+    renderizarTabelaGestao();
+  }catch(err){
+    console.error(err);
+    mostrarToast('Não foi possível carregar os empréstimos. Verifique sua conexão com a internet.', 'erro');
+  }
 }
 
 function statusEfetivo(reg){
@@ -1283,14 +1271,18 @@ function renderizarTabelaGestao(){
 }
 
 async function abrirRegistroNoFormulario(id){
-  const reg = await obterRegistroPorId(id);
-  if(!reg){ mostrarToast('Registro não encontrado.', 'erro'); return; }
-  preencherFormularioComRegistro(reg);
-  mostrarView('form');
+  try{
+    const reg = await obterRegistroPorId(id);
+    preencherFormularioComRegistro(reg);
+    mostrarView('form');
+  }catch(err){
+    console.error(err);
+    mostrarToast('Registro não encontrado ou erro de conexão.', 'erro');
+  }
 }
 
 /* =========================================================================
-   EXPORTAÇÃO (backup local)
+   EXPORTAÇÃO (backup a partir dos dados no Supabase)
    ========================================================================= */
 function baixarArquivo(nome, conteudo, tipo){
   const blob = new Blob([conteudo], { type: tipo });
@@ -1302,31 +1294,41 @@ function baixarArquivo(nome, conteudo, tipo){
 }
 
 async function exportarJSON(){
-  const registros = await listarRegistros();
-  baixarArquivo(`emprestimos_fco_${Date.now()}.json`, JSON.stringify(registros, null, 2), 'application/json');
-  mostrarToast('Backup em JSON gerado.');
+  try{
+    const registros = await listarRegistros();
+    baixarArquivo(`emprestimos_fco_${Date.now()}.json`, JSON.stringify(registros, null, 2), 'application/json');
+    mostrarToast('Backup em JSON gerado.');
+  }catch(err){
+    console.error(err);
+    mostrarToast('Não foi possível exportar. Verifique sua conexão com a internet.', 'erro');
+  }
 }
 
 async function exportarCSV(){
-  const registros = await listarRegistros();
-  const colunas = ['codigo','dataEmissao','status','nomeSolicitante','matricula','vinculo','setorCurso',
-    'telefone','email','equipamentos','dataRetirada','dataDevolucaoPrevista','finalidadeUso','localUso',
-    'dataDevolucaoEfetiva','observacoesDevolucao'];
-  const linhas = [colunas.join(',')];
+  try{
+    const registros = await listarRegistros();
+    const colunas = ['codigo','dataEmissao','status','nomeSolicitante','matricula','vinculo','setorCurso',
+      'telefone','email','equipamentos','dataRetirada','dataDevolucaoPrevista','finalidadeUso','localUso',
+      'dataDevolucaoEfetiva','observacoesDevolucao'];
+    const linhas = [colunas.join(',')];
 
-  registros.forEach(r=>{
-    const equipStr = (r.equipamentos||[]).map(e=> `${e.tipo||''} ${e.marcaModelo||''} (Pat.${e.patrimonio||''})`).join(' | ');
-    const campos = [
-      r.codigo, r.dataEmissao, r.status, r.solicitante?.nome, r.solicitante?.matricula, r.solicitante?.vinculo,
-      r.solicitante?.setorCurso, r.solicitante?.telefone, r.solicitante?.email, equipStr,
-      r.periodo?.dataRetirada, r.periodo?.dataDevolucaoPrevista, r.periodo?.finalidadeUso, r.periodo?.localUso,
-      r.devolucao?.dataHoraEfetiva, r.devolucao?.observacoes
-    ].map(csvEscape);
-    linhas.push(campos.join(','));
-  });
+    registros.forEach(r=>{
+      const equipStr = (r.equipamentos||[]).map(e=> `${e.tipo||''} ${e.marcaModelo||''} (Pat.${e.patrimonio||''})`).join(' | ');
+      const campos = [
+        r.codigo, r.dataEmissao, r.status, r.solicitante?.nome, r.solicitante?.matricula, r.solicitante?.vinculo,
+        r.solicitante?.setorCurso, r.solicitante?.telefone, r.solicitante?.email, equipStr,
+        r.periodo?.dataRetirada, r.periodo?.dataDevolucaoPrevista, r.periodo?.finalidadeUso, r.periodo?.localUso,
+        r.devolucao?.dataHoraEfetiva, r.devolucao?.observacoes
+      ].map(csvEscape);
+      linhas.push(campos.join(','));
+    });
 
-  baixarArquivo(`emprestimos_fco_${Date.now()}.csv`, '﻿' + linhas.join('\r\n'), 'text/csv;charset=utf-8');
-  mostrarToast('Backup em CSV gerado.');
+    baixarArquivo(`emprestimos_fco_${Date.now()}.csv`, '﻿' + linhas.join('\r\n'), 'text/csv;charset=utf-8');
+    mostrarToast('Backup em CSV gerado.');
+  }catch(err){
+    console.error(err);
+    mostrarToast('Não foi possível exportar. Verifique sua conexão com a internet.', 'erro');
+  }
 }
 
 function csvEscape(valor){
@@ -1339,7 +1341,6 @@ function csvEscape(valor){
    INICIALIZAÇÃO
    ========================================================================= */
 (async function iniciar(){
-  await abrirBanco();
   ['sigSolicitante','sigTIEntrega','sigTIDevolucao'].forEach(iniciarCanvasAssinatura);
   await novoEmprestimo(false);
   await carregarEmprestimos();
