@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termo de Empréstimo de Equipamentos de TI — Faculdade FCO</title>
+
+<!-- Fonte institucional via Google Fonts, com fallback para fontes do sistema -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* =======================================================================
+   PALETA OFICIAL DA FACULDADE FCO
+   Para trocar as cores da identidade visual, altere apenas as variáveis
+   abaixo. Todo o restante do CSS referencia estas variáveis.
+   ======================================================================= */
+:root{
+  --creme:      #F9F2EA; /* fundo geral */
+  --azul-vivo:  #0063F2; /* cor primária, botões e destaques */
+  --azul-marinho:#0F2B56; /* títulos, cabeçalho, texto de destaque, borda do logo */
+  --ambar:      #FFBA00; /* avisos, estados de atenção */
+  --vinho:      #A10A37; /* erros, campos obrigatórios, exclusão */
+
+  --branco: #FFFFFF;
+  --cinza-borda: #DCD3C4;
+  --cinza-texto: #5B5347;
+  --sombra: 0 2px 10px rgba(15,43,86,0.08);
+  --raio: 10px;
+  --fonte: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin:0;
+  font-family: var(--fonte);
+  background: var(--creme);
+  color: var(--azul-marinho);
+  line-height:1.5;
+  padding-bottom: 60px;
+}
+
+h1,h2,h3{ color: var(--azul-marinho); margin:0 0 4px; }
+
+/* =========================== NAVEGAÇÃO (abas) ========================= */
+.topnav{
+  position: sticky; top:0; z-index:50;
+  background: var(--azul-marinho);
+  display:flex; gap:4px; padding: 8px 16px;
+  flex-wrap: wrap;
+}
+.topnav button{
+  background: transparent;
+  color: var(--creme);
+  border: 1px solid rgba(249,242,234,0.35);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor:pointer;
+  font-family: var(--fonte);
+  font-weight:600;
+  font-size: 0.92rem;
+  transition: background .15s ease;
+}
+.topnav button:hover{ background: rgba(249,242,234,0.12); }
+.topnav button[aria-selected="true"]{
+  background: var(--azul-vivo);
+  border-color: var(--azul-vivo);
+}
+
+.container{
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+}
+
+/* ============================= CABEÇALHO =============================== */
+.header-card{
+  background: var(--branco);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 24px;
+  display:flex;
+  gap:20px;
+  align-items:center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.header-brand{ display:flex; align-items:center; gap:16px; }
+.header-brand .logo-text{ display:flex; flex-direction:column; line-height:1.1; }
+.header-brand .logo-text .linha1{
+  font-weight:300; letter-spacing:2px; font-size:0.8rem; color:var(--azul-marinho);
+}
+.header-brand .logo-text .linha2{
+  font-weight:800; letter-spacing:1px; font-size:1.5rem; color:var(--azul-marinho);
+}
+.header-title h1{ font-size:1.3rem; }
+.header-title p{ margin:2px 0 0; color:var(--cinza-texto); font-size:0.9rem;}
+
+.header-meta{
+  text-align:right;
+  font-size:0.9rem;
+  color: var(--azul-marinho);
+  background: var(--creme);
+  border: 1px dashed var(--azul-vivo);
+  border-radius: 8px;
+  padding: 10px 16px;
+  min-width: 220px;
+}
+.header-meta strong{ display:block; font-size:1.05rem; color: var(--azul-vivo); }
+
+/* ============================== SEÇÕES =================================== */
+.section-card{
+  background: var(--branco);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 22px 24px;
+  margin-bottom: 22px;
+}
+.section-card legend, .section-card > h2{
+  font-size: 1.05rem;
+  font-weight:700;
+  color: var(--azul-marinho);
+  padding:0 0 12px;
+  border-bottom: 2px solid var(--creme);
+  margin-bottom: 16px;
+  width:100%;
+}
+fieldset{ border:none; margin:0; padding:0; }
+.section-card.devolucao{ border-color: var(--azul-vivo); }
+.section-hint{ color: var(--cinza-texto); font-size:0.85rem; margin: -10px 0 16px; }
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap: 14px 18px;
+}
+.field{ display:flex; flex-direction:column; gap:5px; }
+.field.span-2{ grid-column: span 2; }
+.field label{ font-size:0.85rem; font-weight:600; color: var(--azul-marinho); }
+.field .obrig{ color: var(--vinho); }
+.field .aux{ font-size:0.78rem; color: var(--cinza-texto); font-weight:400; }
+
+input[type=text], input[type=tel], input[type=email], input[type=datetime-local],
+input[type=date], input[type=number], select, textarea{
+  font-family: var(--fonte);
+  font-size: 0.95rem;
+  padding: 9px 11px;
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: 7px;
+  background: var(--branco);
+  color: var(--azul-marinho);
+  width:100%;
+}
+textarea{ resize: vertical; min-height: 70px; }
+input:focus, select:focus, textarea:focus, button:focus-visible{
+  outline: 3px solid rgba(0,99,242,0.35);
+  border-color: var(--azul-vivo);
+}
+input[readonly]{ background: var(--creme); color: var(--cinza-texto); }
+
+input.campo-invalido, select.campo-invalido, textarea.campo-invalido{
+  border-color: var(--vinho);
+  background: #FCEEF1;
+}
+.msg-erro{
+  color: var(--vinho);
+  font-size: 0.78rem;
+  font-weight:600;
+  min-height: 14px;
+}
+
+.radio-group{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+.radio-group label{ font-weight:500; display:flex; gap:6px; align-items:center; font-size:0.92rem; }
+
+/* ============================ TABELA DE EQUIPAMENTOS ==================== */
+.table-wrap{ overflow-x:auto; }
+table.equip-table{ width:100%; border-collapse: collapse; min-width: 760px; }
+table.equip-table th{
+  background: var(--azul-marinho); color: var(--creme);
+  text-align:left; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em;
+  padding: 9px 8px;
+}
+table.equip-table td{ padding:7px 8px; border-bottom:1px solid var(--cinza-borda); vertical-align:top; }
+table.equip-table tr:nth-child(even) td{ background: rgba(249,242,234,0.5); }
+table.equip-table input, table.equip-table select, table.equip-table textarea{ font-size:0.88rem; padding:7px 8px; }
+table.equip-table td.col-remover{ text-align:center; }
+
+.btn-icon-remover{
+  background: var(--vinho); color:#fff; border:none; border-radius:6px;
+  width:30px; height:30px; cursor:pointer; font-size:1rem; line-height:1;
+}
+.btn-icon-remover:hover{ opacity:0.88; }
+
+.btn{
+  font-family: var(--fonte);
+  font-weight:700;
+  font-size:0.9rem;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border:2px solid transparent;
+  cursor:pointer;
+  transition: filter .15s ease, transform .05s ease;
+}
+.btn:active{ transform: translateY(1px); }
+.btn-primary{ background: var(--azul-vivo); color:#fff; }
+.btn-primary:hover{ filter:brightness(1.08); }
+.btn-primary:disabled{ background:#9CB9E8; cursor:not-allowed; }
+.btn-outline{ background:transparent; color: var(--azul-marinho); border-color: var(--azul-marinho); }
+.btn-outline:hover{ background: rgba(15,43,86,0.06); }
+.btn-danger{ background: var(--vinho); color:#fff; }
+.btn-danger:hover{ filter:brightness(1.08); }
+.btn-amber{ background: var(--ambar); color: var(--azul-marinho); }
+.btn-sm{ padding:7px 12px; font-size:0.82rem; }
+
+.actions-row{ display:flex; gap:10px; flex-wrap:wrap; margin: 6px 0 4px; }
+
+/* ============================== TERMO =================================== */
+.termo-box{
+  background: var(--creme);
+  border: 1px solid var(--cinza-borda);
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-size: 0.87rem;
+  color: var(--azul-marinho);
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+}
+.termo-box h3{ font-size:0.92rem; margin-top:14px; }
+.termo-box h3:first-child{ margin-top:0; }
+.termo-box p{ margin:6px 0; }
+
+.checkbox-linha{
+  display:flex; align-items:flex-start; gap:10px;
+  background:#fff; border:1.5px solid var(--cinza-borda); border-radius:8px;
+  padding:12px 14px;
+}
+.checkbox-linha input{ width:auto; margin-top:3px; accent-color: var(--azul-vivo); transform: scale(1.15); }
+.checkbox-linha.invalido{ border-color: var(--vinho); background:#FCEEF1; }
+.checkbox-linha label{ font-weight:600; font-size:0.9rem; }
+
+/* ============================ ASSINATURAS (canvas) ======================= */
+.sig-block{
+  border:1.5px dashed var(--cinza-borda);
+  border-radius:8px;
+  padding: 10px;
+  background:#fff;
+}
+.sig-block canvas{
+  width:100%; height:130px; display:block;
+  background: var(--creme);
+  border-radius:6px;
+  touch-action:none;
+  cursor: crosshair;
+}
+.sig-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:6px;}
+.sig-actions span{ font-size:0.76rem; color:var(--cinza-texto); }
+
+/* ============================ BADGES / STATUS ============================ */
+.badge{
+  display:inline-block; padding:3px 10px; border-radius:999px;
+  font-size:0.75rem; font-weight:700; letter-spacing:0.02em;
+}
+.badge-ativo{ background: rgba(0,99,242,0.12); color: var(--azul-vivo); }
+.badge-atrasado{ background: rgba(255,186,0,0.25); color:#7A5400; }
+.badge-pendencia{ background: rgba(161,10,55,0.12); color: var(--vinho); }
+.badge-ok{ background: rgba(30,140,80,0.14); color:#1E8C50; }
+.badge-naodevolvido{ background: var(--vinho); color:#fff; }
+
+/* ============================ PAINEL DE GESTÃO =========================== */
+.gestao-toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end; }
+.gestao-toolbar .field{ min-width:200px; }
+.tabela-gestao-wrap{ overflow-x:auto; }
+table.tabela-gestao{ width:100%; border-collapse:collapse; min-width:820px; }
+table.tabela-gestao th{
+  text-align:left; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.03em;
+  color:var(--branco); background:var(--azul-marinho); padding:10px 10px;
+  position: sticky; top:52px;
+}
+table.tabela-gestao td{ padding:9px 10px; border-bottom:1px solid var(--cinza-borda); font-size:0.88rem; }
+table.tabela-gestao tr.linha-emprestimo{ cursor:pointer; }
+table.tabela-gestao tr.linha-emprestimo:hover td{ background: rgba(0,99,242,0.06); }
+.empty-state{ text-align:center; padding:40px 20px; color:var(--cinza-texto); }
+
+/* =============================== RODAPÉ FIXO ============================= */
+.barra-final{
+  display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end;
+  padding: 18px 4px 4px;
+}
+
+.toast{
+  position: fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background: var(--azul-marinho); color:#fff; padding:12px 22px; border-radius:8px;
+  font-size:0.9rem; font-weight:600; box-shadow:0 4px 18px rgba(0,0,0,0.25);
+  z-index:200; opacity:0; pointer-events:none; transition: opacity .25s ease, transform .25s ease;
+}
+.toast.show{ opacity:1; transform: translateX(-50%) translateY(-6px); }
+.toast.erro{ background: var(--vinho); }
+
+[hidden]{ display:none !important; }
+
+/* =============================== IMPRESSÃO ================================ */
+@media print{
+  body{ background:#fff; padding:0; }
+  .topnav, .actions-row, .btn, .barra-final, .toast, #view-management,
+  .btn-icon-remover, table.equip-table th.th-remover, table.equip-table td.col-remover{
+    display:none !important;
+  }
+  .container{ max-width:100%; padding:0; }
+  .header-card, .section-card{ box-shadow:none; border:1px solid #ccc; break-inside: avoid; }
+  .sig-block{ border-color:#999; }
+  .termo-box{ max-height:none; overflow:visible; }
+  @page{ size:A4; margin:14mm; }
+}
+
+/* =============================== RESPONSIVO =============================== */
+@media (max-width: 640px){
+  .field.span-2{ grid-column: span 1; }
+  .header-card{ flex-direction:column; align-items:flex-start; }
+  .header-meta{ text-align:left; width:100%; }
+  table.tabela-gestao th{ position:static; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ NAVEGAÇÃO ENTRE ABAS ============================ -->
+<nav class="topnav" role="tablist" aria-label="Navegação do sistema">
+  <button type="button" id="tab-btn-form" role="tab" aria-selected="true" onclick="mostrarView('form')">📋 Formulário de Empréstimo</button>
+  <button type="button" id="tab-btn-gestao" role="tab" aria-selected="false" onclick="mostrarView('gestao')">🗂️ Painel de Gestão (TI)</button>
+</nav>
+
+<div class="container">
+
+<!-- ================================================================= -->
+<!-- VIEW 1: FORMULÁRIO                                                  -->
+<!-- ================================================================= -->
+<section id="view-form">
+
+  <!-- 1. CABEÇALHO -->
+  <header class="header-card">
+    <div class="header-brand">
+      <!-- LOGO: para trocar o logo da instituição, substitua este bloco <svg> -->
+      <svg width="56" height="60" viewBox="0 0 100 108" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <!-- cinco losangos alinhados no topo -->
+        <g fill="#0F2B56">
+          <rect x="6"  y="2" width="14" height="14" transform="rotate(45 13 9)"/>
+          <rect x="27" y="2" width="14" height="14" transform="rotate(45 34 9)"/>
+          <rect x="48" y="2" width="14" height="14" transform="rotate(45 55 9)"/>
+          <rect x="69" y="2" width="14" height="14" transform="rotate(45 76 9)"/>
+          <rect x="90" y="2" width="0"  height="14" transform="rotate(45 97 9)"/>
+        </g>
+        <!-- escudo -->
+        <path d="M50 22 L92 34 V60 C92 84 74 98 50 106 C26 98 8 84 8 60 V34 Z"
+              fill="none" stroke="#0F2B56" stroke-width="6"/>
+        <!-- M central -->
+        <text x="50" y="76" text-anchor="middle" font-family="Inter, sans-serif" font-weight="800"
+              font-size="42" fill="#0F2B56">M</text>
+      </svg>
+      <div class="header-title">
+        <div class="logo-text">
+          <span class="linha1">FACULDADE</span>
+          <span class="linha2">FCO</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-title">
+      <h1>Termo de Empréstimo de Equipamentos de TI</h1>
+      <!-- TEXTO: ajuste o subtítulo institucional aqui, se necessário -->
+      <p>Controle interno da Coordenação de Tecnologia da Informação</p>
+    </div>
+    <div class="header-meta">
+      Código do empréstimo
+      <strong id="campoCodigoEmprestimo">EMP-000001</strong>
+      Emitido em <span id="campoDataEmissao">--/--/----</span>
+    </div>
+  </header>
+
+  <form id="formEmprestimo" novalidate>
+    <input type="hidden" id="recordId" value="">
+
+    <!-- 2. DADOS DO SOLICITANTE -->
+    <fieldset class="section-card">
+      <legend>2. Dados do Solicitante</legend>
+      <div class="grid">
+        <div class="field span-2">
+          <label for="solNome">Nome completo <span class="obrig">*</span></label>
+          <input type="text" id="solNome" name="solNome" required autocomplete="name">
+          <span class="msg-erro" data-erro-de="solNome"></span>
+        </div>
+        <div class="field">
+          <label for="solMatricula">Matrícula / Registro <span class="obrig">*</span></label>
+          <input type="text" id="solMatricula" name="solMatricula" required>
+          <span class="msg-erro" data-erro-de="solMatricula"></span>
+        </div>
+        <div class="field">
+          <label id="lblVinculo">Vínculo <span class="obrig">*</span></label>
+          <div class="radio-group" role="radiogroup" aria-labelledby="lblVinculo">
+            <label><input type="radio" name="solVinculo" value="docente" required> Docente</label>
+            <label><input type="radio" name="solVinculo" value="discente"> Discente</label>
+            <label><input type="radio" name="solVinculo" value="colaborador"> Colaborador</label>
+          </div>
+          <span class="msg-erro" data-erro-de="solVinculo"></span>
+        </div>
+        <div class="field">
+          <label for="solSetorCurso">Setor ou Curso</label>
+          <input type="text" id="solSetorCurso" name="solSetorCurso" list="listaSetoresCursos" placeholder="Ex.: Curso de Engenharia de Software">
+          <!-- LISTA: adicione/edite as opções sugeridas de setores/cursos aqui -->
+          <datalist id="listaSetoresCursos">
+            <option value="Coordenação de TI">
+            <option value="Secretaria Acadêmica">
+            <option value="Biblioteca">
+            <option value="Curso de Administração">
+            <option value="Curso de Direito">
+            <option value="Curso de Engenharia de Software">
+            <option value="Curso de Pedagogia">
+            <option value="Curso de Psicologia">
+            <option value="Núcleo de Extensão">
+            <option value="Reitoria">
+          </datalist>
+        </div>
+        <div class="field">
+          <label for="solTelefone">Telefone</label>
+          <input type="tel" id="solTelefone" name="solTelefone" autocomplete="tel" placeholder="(00) 00000-0000">
+        </div>
+        <div class="field">
+          <label for="solEmail">E-mail</label>
+          <input type="email" id="solEmail" name="solEmail" autocomplete="email">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 3. TABELA DE EQUIPAMENTOS -->
+    <fieldset class="section-card">
+      <legend>3. Equipamentos Emprestados</legend>
+      <p class="section-hint">Adicione uma linha para cada equipamento entregue. Não há limite de itens.</p>
+      <div class="table-wrap">
+        <table class="equip-table" id="tabelaEquipamentos">
+          <thead>
+            <tr>
+              <th style="min-width:140px">Tipo de equipamento</th>
+              <th style="min-width:160px">Marca / Modelo</th>
+              <th style="min-width:140px">Nº patrimônio / série</th>
+              <th style="min-width:160px">Acessórios inclusos</th>
+              <th style="min-width:150px">Estado de conservação</th>
+              <th style="min-width:170px">Descrição de avarias</th>
+              <th class="th-remover" style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabelaEquipamentos"><!-- linhas inseridas via JS --></tbody>
+        </table>
+      </div>
+      <span class="msg-erro" data-erro-de="equipamentos"></span>
+      <div class="actions-row">
+        <button type="button" class="btn btn-outline btn-sm" onclick="adicionarLinhaEquipamento()">+ Adicionar equipamento</button>
+      </div>
+    </fieldset>
+
+    <!-- 4. PERÍODO DO EMPRÉSTIMO -->
+    <fieldset class="section-card">
+      <legend>4. Período do Empréstimo</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="dataRetirada">Data/hora de retirada <span class="obrig">*</span></label>
+          <input type="datetime-local" id="dataRetirada" name="dataRetirada" required>
+          <span class="msg-erro" data-erro-de="dataRetirada"></span>
+        </div>
+        <div class="field">
+          <label for="dataDevolucaoPrevista">Data/hora prevista de devolução <span class="obrig">*</span></label>
+          <input type="datetime-local" id="dataDevolucaoPrevista" name="dataDevolucaoPrevista" required>
+          <span class="msg-erro" data-erro-de="dataDevolucaoPrevista"></span>
+        </div>
+        <div class="field span-2">
+          <label for="finalidadeUso">Finalidade de uso <span class="obrig">*</span></label>
+          <input type="text" id="finalidadeUso" name="finalidadeUso" required placeholder="Ex.: Apresentação de trabalho em sala">
+          <span class="msg-erro" data-erro-de="finalidadeUso"></span>
+        </div>
+        <div class="field span-2">
+          <label for="localUso">Local de uso</label>
+          <input type="text" id="localUso" name="localUso" placeholder="Ex.: Laboratório 3, Sala 210, Evento externo...">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 5. TERMO DE RESPONSABILIDADE -->
+    <fieldset class="section-card">
+      <legend>5. Termo de Responsabilidade</legend>
+      <!-- TEXTO DO TERMO: edite as cláusulas abaixo conforme a política institucional -->
+      <div class="termo-box">
+        <h3>1. Guarda e conservação</h3>
+        <p>O(a) solicitante compromete-se a zelar pela guarda, conservação e bom uso do(s) equipamento(s) recebido(s), mantendo-o(s) em condições adequadas de funcionamento durante todo o período do empréstimo.</p>
+        <h3>2. Uso indevido</h3>
+        <p>É vedada a utilização do equipamento para fins diversos daqueles declarados neste termo, bem como sua cessão a terceiros não autorizados pela Coordenação de TI da Faculdade FCO.</p>
+        <h3>3. Danos e extravio</h3>
+        <p>O(a) solicitante será responsável por quaisquer danos, avarias ou extravio do equipamento durante o período de posse, ainda que decorrentes de caso fortuito, ressalvadas as hipóteses de defeito de fabricação previamente identificado.</p>
+        <h3>4. Ressarcimento</h3>
+        <p>Em caso de perda, dano irreparável ou extravio, o(a) solicitante deverá ressarcir a Faculdade FCO pelo valor de mercado do bem ou por sua reposição por equipamento de especificação equivalente, a critério da Coordenação de TI.</p>
+        <h3>5. Prazo de devolução</h3>
+        <p>O equipamento deverá ser devolvido até a data/hora prevista informada na Seção 4. O atraso na devolução, sem justificativa aceita previamente pela TI, poderá acarretar advertência, suspensão temporária do direito a novos empréstimos e demais medidas cabíveis previstas no regimento interno.</p>
+        <h3>6. Aceite</h3>
+        <p>Ao marcar a opção abaixo e assinar este termo, o(a) solicitante declara ter lido, compreendido e concordado integralmente com as cláusulas aqui descritas.</p>
+      </div>
+      <div class="checkbox-linha" id="checkboxTermoLinha">
+        <input type="checkbox" id="termoAceito" name="termoAceito" required>
+        <label for="termoAceito">Li e concordo com os termos acima <span class="obrig">*</span></label>
+      </div>
+      <span class="msg-erro" data-erro-de="termoAceito"></span>
+    </fieldset>
+
+    <!-- 6. ASSINATURAS DE ENTREGA -->
+    <fieldset class="section-card">
+      <legend>6. Assinaturas — Entrega do Equipamento</legend>
+      <div class="grid">
+        <div class="field">
+          <label>Assinatura do solicitante</label>
+          <div class="sig-block">
+            <canvas id="sigSolicitante" width="500" height="130" aria-label="Área para assinatura do solicitante com o mouse ou toque"></canvas>
+            <div class="sig-actions">
+              <span>Desenhe com o mouse ou o dedo (touch)</span>
+              <button type="button" class="btn btn-outline btn-sm" onclick="limparAssinatura('sigSolicitante')">Limpar</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Assinatura do responsável de TI (entrega)</label>
+          <div class="sig-block">
+            <canvas id="sigTIEntrega" width="500" height="130" aria-label="Área para assinatura do responsável de TI que realizou a entrega"></canvas>
+            <div class="sig-actions">
+              <span>Desenhe com o mouse ou o dedo (touch)</span>
+              <button type="button" class="btn btn-outline btn-sm" onclick="limparAssinatura('sigTIEntrega')">Limpar</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="entregaNomeSolicitante">Nome do solicitante (confirmação)</label>
+          <input type="text" id="entregaNomeSolicitante" name="entregaNomeSolicitante" placeholder="Alternativa simples à assinatura manual">
+        </div>
+        <div class="field">
+          <label for="entregaNomeTI">Nome do responsável de TI (entrega)</label>
+          <input type="text" id="entregaNomeTI" name="entregaNomeTI">
+        </div>
+        <div class="field">
+          <label for="dataEntrega">Data da entrega</label>
+          <input type="date" id="dataEntrega" name="dataEntrega">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 7. CONTROLE DE DEVOLUÇÃO -->
+    <fieldset class="section-card devolucao">
+      <legend>7. Controle de Devolução <span style="font-weight:400; font-size:0.8rem; color:var(--cinza-texto)">(preenchido pela TI no momento da devolução)</span></legend>
+
+      <div class="grid">
+        <div class="field">
+          <label for="dataDevolucaoEfetiva">Data/hora efetiva da devolução</label>
+          <input type="datetime-local" id="dataDevolucaoEfetiva" name="dataDevolucaoEfetiva">
+        </div>
+        <div class="field">
+          <label for="statusFinal">Status final</label>
+          <select id="statusFinal" name="statusFinal">
+            <option value="ativo">Em aberto (ativo)</option>
+            <option value="devolvido_sem_pendencias">Devolvido sem pendências</option>
+            <option value="devolvido_com_pendencias">Devolvido com pendências</option>
+            <option value="nao_devolvido">Não devolvido (extraviado/definitivo)</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.92rem; margin:18px 0 8px;">Conferência do estado dos equipamentos</h3>
+      <p class="section-hint" style="margin-top:-4px;">Gerada automaticamente a partir da lista de equipamentos da Seção 3.</p>
+      <div id="conferenciaDevolucaoContainer" class="grid"><!-- gerado via JS --></div>
+
+      <div class="field" style="margin-top:14px;">
+        <label for="obsDevolucao">Observações gerais (avarias, itens faltantes, etc.)</label>
+        <textarea id="obsDevolucao" name="obsDevolucao"></textarea>
+      </div>
+
+      <div class="grid" style="margin-top:14px;">
+        <div class="field">
+          <label>Assinatura do responsável de TI (recebimento)</label>
+          <div class="sig-block">
+            <canvas id="sigTIDevolucao" width="500" height="130" aria-label="Área para assinatura do responsável de TI que recebeu a devolução"></canvas>
+            <div class="sig-actions">
+              <span>Desenhe com o mouse ou o dedo (touch)</span>
+              <button type="button" class="btn btn-outline btn-sm" onclick="limparAssinatura('sigTIDevolucao')">Limpar</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="devolucaoNomeTI">Nome do responsável de TI (recebimento)</label>
+          <input type="text" id="devolucaoNomeTI" name="devolucaoNomeTI">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- BARRA DE AÇÕES -->
+    <div class="barra-final">
+      <button type="button" class="btn btn-outline" onclick="novoEmprestimo(true)">Novo empréstimo</button>
+      <button type="button" class="btn btn-amber" onclick="limparFormulario()">Limpar formulário</button>
+      <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button>
+      <button type="submit" class="btn btn-primary" id="btnSalvarEmprestimo" disabled>💾 Salvar empréstimo</button>
+    </div>
+  </form>
+</section>
+
+<!-- ================================================================= -->
+<!-- VIEW 2: PAINEL DE GESTÃO DA TI                                      -->
+<!-- ================================================================= -->
+<section id="view-management" hidden>
+  <header class="header-card">
+    <div class="header-title">
+      <h1>Painel de Gestão de Empréstimos — TI</h1>
+      <p>Consulte, filtre e finalize devoluções dos empréstimos registrados neste navegador.</p>
+    </div>
+  </header>
+
+  <div class="section-card">
+    <div class="gestao-toolbar">
+      <div class="field">
+        <label for="filtroStatus">Filtrar por status</label>
+        <select id="filtroStatus" onchange="renderizarTabelaGestao()">
+          <option value="todos">Todos</option>
+          <option value="ativo">Ativos</option>
+          <option value="atrasado">Atrasados</option>
+          <option value="devolvido_sem_pendencias">Devolvidos (sem pendências)</option>
+          <option value="devolvido_com_pendencias">Devolvidos (com pendências)</option>
+          <option value="nao_devolvido">Não devolvidos</option>
+        </select>
+      </div>
+      <div class="field" style="flex:1;">
+        <label for="buscaGestao">Buscar por nome do solicitante ou nº de patrimônio</label>
+        <input type="text" id="buscaGestao" oninput="renderizarTabelaGestao()" placeholder="Digite para buscar...">
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-outline btn-sm" onclick="carregarEmprestimos()">↻ Atualizar lista</button>
+      </div>
+    </div>
+
+    <div class="tabela-gestao-wrap">
+      <table class="tabela-gestao">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Solicitante</th>
+            <th>Setor/Curso</th>
+            <th>Retirada</th>
+            <th>Devolução prevista</th>
+            <th>Itens</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabelaGestao"></tbody>
+      </table>
+      <div id="estadoVazioGestao" class="empty-state" hidden>Nenhum empréstimo encontrado com os filtros atuais.</div>
+    </div>
+
+    <div class="actions-row" style="margin-top:18px;">
+      <button type="button" class="btn btn-outline" onclick="exportarJSON()">⬇️ Exportar tudo (JSON)</button>
+      <button type="button" class="btn btn-outline" onclick="exportarCSV()">⬇️ Exportar tudo (CSV)</button>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================================
+   ESTADO GERAL E BANCO DE DADOS (IndexedDB)
+   ========================================================================= */
+const DB_NOME = 'fco_emprestimos_ti_db';
+const DB_VERSAO = 1;
+let db = null;
+let eqRowSeq = 0;                 // gerador de ids únicos para linhas de equipamento
+const conferenciaDevolucaoDados = {}; // cache: uid da linha -> {estado, obs}
+let registroAtualId = null;       // id do registro carregado (null = novo empréstimo)
+let registroAtualCodigo = null;
+let registroAtualDataEmissao = null;
+let todosRegistros = [];          // cache local para o painel de gestão
+
+function abrirBanco(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(DB_NOME, DB_VERSAO);
+    req.onupgradeneeded = (ev)=>{
+      const _db = ev.target.result;
+      if(!_db.objectStoreNames.contains('emprestimos')){
+        const store = _db.createObjectStore('emprestimos', { keyPath:'id', autoIncrement:true });
+        store.createIndex('status', 'status', { unique:false });
+        store.createIndex('nomeSolicitante', 'solicitante.nome', { unique:false });
+      }
+      if(!_db.objectStoreNames.contains('contadores')){
+        _db.createObjectStore('contadores', { keyPath:'nome' });
+      }
+    };
+    req.onsuccess = (ev)=>{ db = ev.target.result; resolve(db); };
+    req.onerror = (ev)=>{ reject(ev.target.error); };
+  });
+}
+
+function txStore(nome, modo){
+  return db.transaction(nome, modo).objectStore(nome);
+}
+
+function proximoCodigoPreview(){
+  return new Promise((resolve)=>{
+    const store = txStore('contadores','readonly');
+    const req = store.get('emprestimo');
+    req.onsuccess = ()=>{
+      const valor = req.result ? req.result.valor : 0;
+      resolve(formatarCodigo(valor+1));
+    };
+    req.onerror = ()=> resolve(formatarCodigo(1));
+  });
+}
+
+function incrementarContadorEGerarCodigo(){
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction('contadores','readwrite');
+    const store = tx.objectStore('contadores');
+    const req = store.get('emprestimo');
+    req.onsuccess = ()=>{
+      const atual = req.result ? req.result.valor : 0;
+      const novo = atual + 1;
+      store.put({ nome:'emprestimo', valor:novo });
+      tx.oncomplete = ()=> resolve(formatarCodigo(novo));
+      tx.onerror = ()=> reject(tx.error);
+    };
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+function formatarCodigo(n){
+  return 'EMP-' + String(n).padStart(6,'0');
+}
+
+function salvarRegistro(registro){
+  return new Promise((resolve, reject)=>{
+    const store = txStore('emprestimos','readwrite');
+    const req = registro.id ? store.put(registro) : store.add(registro);
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+function listarRegistros(){
+  return new Promise((resolve, reject)=>{
+    const store = txStore('emprestimos','readonly');
+    const req = store.getAll();
+    req.onsuccess = ()=> resolve(req.result || []);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+function obterRegistroPorId(id){
+  return new Promise((resolve, reject)=>{
+    const store = txStore('emprestimos','readonly');
+    const req = store.get(id);
+    req.onsuccess = ()=> resolve(req.result || null);
+    req.onerror = ()=> reject(req.error);
+  });
+}
+
+/* =========================================================================
+   NAVEGAÇÃO ENTRE ABAS
+   ========================================================================= */
+function mostrarView(nome){
+  const isForm = nome === 'form';
+  document.getElementById('view-form').hidden = !isForm;
+  document.getElementById('view-management').hidden = isForm;
+  document.getElementById('tab-btn-form').setAttribute('aria-selected', String(isForm));
+  document.getElementById('tab-btn-gestao').setAttribute('aria-selected', String(!isForm));
+  if(!isForm) renderizarTabelaGestao();
+}
+
+/* =========================================================================
+   TABELA DE EQUIPAMENTOS (dinâmica)
+   ========================================================================= */
+function novaLinhaEquipamentoHTML(uid, dados={}){
+  return `
+    <tr data-uid="${uid}">
+      <td><input type="text" class="eq-tipo" value="${escapeAttr(dados.tipo||'')}" placeholder="Ex.: Notebook"></td>
+      <td><input type="text" class="eq-marca" value="${escapeAttr(dados.marcaModelo||'')}" placeholder="Ex.: Dell Latitude 5420"></td>
+      <td><input type="text" class="eq-patrimonio" value="${escapeAttr(dados.patrimonio||'')}" placeholder="Ex.: PAT-00231"></td>
+      <td><input type="text" class="eq-acessorios" value="${escapeAttr(dados.acessorios||'')}" placeholder="Ex.: Carregador, mouse"></td>
+      <td>
+        <select class="eq-estado">
+          <option value="novo" ${dados.estadoEntrega==='novo'?'selected':''}>Novo</option>
+          <option value="bom" ${(!dados.estadoEntrega||dados.estadoEntrega==='bom')?'selected':''}>Bom</option>
+          <option value="regular" ${dados.estadoEntrega==='regular'?'selected':''}>Regular</option>
+          <option value="avarias" ${dados.estadoEntrega==='avarias'?'selected':''}>Com avarias</option>
+        </select>
+      </td>
+      <td><textarea class="eq-avarias" rows="1" placeholder="Descreva avarias, se houver">${escapeHTML(dados.avariasEntrega||'')}</textarea></td>
+      <td class="col-remover"><button type="button" class="btn-icon-remover" title="Remover equipamento" onclick="removerLinhaEquipamento(this)">✕</button></td>
+    </tr>`;
+}
+
+function adicionarLinhaEquipamento(dados={}){
+  const uid = 'eq' + (++eqRowSeq);
+  const tbody = document.getElementById('corpoTabelaEquipamentos');
+  tbody.insertAdjacentHTML('beforeend', novaLinhaEquipamentoHTML(uid, dados));
+  const linha = tbody.querySelector(`tr[data-uid="${uid}"]`);
+  linha.querySelectorAll('input, select, textarea').forEach(el=>{
+    el.addEventListener('input', renderizarConferenciaDevolucao);
+    el.addEventListener('change', renderizarConferenciaDevolucao);
+  });
+  renderizarConferenciaDevolucao();
+  return uid;
+}
+
+function removerLinhaEquipamento(btn){
+  const linha = btn.closest('tr');
+  const uid = linha.getAttribute('data-uid');
+  delete conferenciaDevolucaoDados[uid];
+  linha.remove();
+  renderizarConferenciaDevolucao();
+}
+
+function lerEquipamentosDoDOM(){
+  const linhas = document.querySelectorAll('#corpoTabelaEquipamentos tr');
+  return Array.from(linhas).map(linha=>({
+    uid: linha.getAttribute('data-uid'),
+    tipo: linha.querySelector('.eq-tipo').value.trim(),
+    marcaModelo: linha.querySelector('.eq-marca').value.trim(),
+    patrimonio: linha.querySelector('.eq-patrimonio').value.trim(),
+    acessorios: linha.querySelector('.eq-acessorios').value.trim(),
+    estadoEntrega: linha.querySelector('.eq-estado').value,
+    avariasEntrega: linha.querySelector('.eq-avarias').value.trim()
+  }));
+}
+
+/* =========================================================================
+   CONFERÊNCIA DE DEVOLUÇÃO (Seção 7) — sincronizada com a Seção 3
+   ========================================================================= */
+const ROTULO_ESTADO = { novo:'Novo', bom:'Bom', regular:'Regular', avarias:'Com avarias' };
+
+function renderizarConferenciaDevolucao(){
+  const equipamentos = lerEquipamentosDoDOM();
+  const container = document.getElementById('conferenciaDevolucaoContainer');
+
+  // preserva o que já foi digitado antes de reconstruir
+  container.querySelectorAll('[data-uid-conf]').forEach(bloco=>{
+    const uid = bloco.getAttribute('data-uid-conf');
+    conferenciaDevolucaoDados[uid] = {
+      estado: bloco.querySelector('.conf-estado')?.value || '',
+      obs: bloco.querySelector('.conf-obs')?.value || ''
+    };
+  });
+
+  if(equipamentos.length === 0){
+    container.innerHTML = '<p class="section-hint" style="margin:0;">Nenhum equipamento adicionado na Seção 3 ainda.</p>';
+    return;
+  }
+
+  container.innerHTML = equipamentos.map(eq=>{
+    const salvo = conferenciaDevolucaoDados[eq.uid] || {};
+    const titulo = [eq.tipo || '(tipo não informado)', eq.marcaModelo, eq.patrimonio ? ('Pat. '+eq.patrimonio) : '']
+      .filter(Boolean).join(' — ');
+    return `
+      <div class="field" data-uid-conf="${eq.uid}" style="border:1px solid var(--cinza-borda); border-radius:8px; padding:10px;">
+        <label style="font-size:0.85rem;">${escapeHTML(titulo)}</label>
+        <span class="aux">Estado na entrega: <strong>${ROTULO_ESTADO[eq.estadoEntrega] || '—'}</strong></span>
+        <label class="aux" style="margin-top:6px;">Estado na devolução</label>
+        <select class="conf-estado">
+          <option value="">Não conferido</option>
+          <option value="novo" ${salvo.estado==='novo'?'selected':''}>Novo</option>
+          <option value="bom" ${salvo.estado==='bom'?'selected':''}>Bom</option>
+          <option value="regular" ${salvo.estado==='regular'?'selected':''}>Regular</option>
+          <option value="avarias" ${salvo.estado==='avarias'?'selected':''}>Com avarias</option>
+          <option value="extraviado" ${salvo.estado==='extraviado'?'selected':''}>Extraviado</option>
+        </select>
+        <label class="aux" style="margin-top:6px;">Observações</label>
+        <textarea class="conf-obs" rows="2" placeholder="Avarias, itens faltantes...">${escapeHTML(salvo.obs||'')}</textarea>
+      </div>`;
+  }).join('');
+}
+
+function lerConferenciaDevolucaoDoDOM(){
+  const blocos = document.querySelectorAll('#conferenciaDevolucaoContainer [data-uid-conf]');
+  return Array.from(blocos).map(bloco=>({
+    uid: bloco.getAttribute('data-uid-conf'),
+    estado: bloco.querySelector('.conf-estado').value,
+    obs: bloco.querySelector('.conf-obs').value.trim()
+  }));
+}
+
+/* =========================================================================
+   ASSINATURAS EM CANVAS
+   ========================================================================= */
+const assinaturasAtivas = {};
+
+function iniciarCanvasAssinatura(id){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  ajustarResolucaoCanvas(canvas, ctx);
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#0F2B56';
+  let desenhando = false;
+
+  function posicao(ev){
+    const rect = canvas.getBoundingClientRect();
+    const ponto = ev.touches ? ev.touches[0] : ev;
+    return { x: ponto.clientX - rect.left, y: ponto.clientY - rect.top };
+  }
+  function iniciar(ev){ desenhando = true; const p = posicao(ev); ctx.beginPath(); ctx.moveTo(p.x,p.y); ev.preventDefault(); }
+  function mover(ev){ if(!desenhando) return; const p = posicao(ev); ctx.lineTo(p.x,p.y); ctx.stroke(); ev.preventDefault(); }
+  function parar(){ desenhando = false; }
+
+  canvas.addEventListener('mousedown', iniciar);
+  canvas.addEventListener('mousemove', mover);
+  window.addEventListener('mouseup', parar);
+  canvas.addEventListener('touchstart', iniciar, { passive:false });
+  canvas.addEventListener('touchmove', mover, { passive:false });
+  canvas.addEventListener('touchend', parar);
+
+  assinaturasAtivas[id] = { canvas, ctx };
+}
+
+function ajustarResolucaoCanvas(canvas, ctx){
+  const dpr = window.devicePixelRatio || 1;
+  const largura = canvas.clientWidth || 500;
+  const altura = canvas.clientHeight || 130;
+  canvas.width = largura * dpr;
+  canvas.height = altura * dpr;
+  ctx.scale(dpr, dpr);
+}
+
+function limparAssinatura(id){
+  const { canvas, ctx } = assinaturasAtivas[id];
+  ctx.clearRect(0,0,canvas.width, canvas.height);
+}
+
+function canvasEstaVazio(id){
+  const { canvas } = assinaturasAtivas[id];
+  const ctxTeste = canvas.getContext('2d');
+  const dados = ctxTeste.getImageData(0,0,canvas.width, canvas.height).data;
+  for(let i=3;i<dados.length;i+=4){ if(dados[i] !== 0) return false; }
+  return true;
+}
+
+function obterAssinaturaDataURL(id){
+  return canvasEstaVazio(id) ? '' : assinaturasAtivas[id].canvas.toDataURL('image/png');
+}
+
+function restaurarAssinatura(id, dataURL){
+  limparAssinatura(id);
+  if(!dataURL) return;
+  const { canvas, ctx } = assinaturasAtivas[id];
+  const img = new Image();
+  img.onload = ()=>{
+    const dpr = window.devicePixelRatio || 1;
+    ctx.drawImage(img, 0, 0, canvas.width/dpr, canvas.height/dpr);
+  };
+  img.src = dataURL;
+}
+
+/* =========================================================================
+   UTILITÁRIOS
+   ========================================================================= */
+function escapeHTML(s){
+  return String(s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+function escapeAttr(s){
+  return escapeHTML(s).replace(/"/g,'&quot;');
+}
+function formatarDataHoraBR(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(isNaN(d)) return '—';
+  return d.toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
+}
+function formatarDataBR(dataISO){
+  if(!dataISO) return '—';
+  const [ano,mes,dia] = dataISO.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+function mostrarToast(msg, tipo='ok'){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (tipo==='erro' ? ' erro' : '');
+  clearTimeout(mostrarToast._t);
+  mostrarToast._t = setTimeout(()=> el.classList.remove('show'), 3200);
+}
+
+/* =========================================================================
+   VALIDAÇÃO
+   ========================================================================= */
+function limparErrosVisuais(){
+  document.querySelectorAll('.campo-invalido').forEach(el=> el.classList.remove('campo-invalido'));
+  document.querySelectorAll('.msg-erro').forEach(el=> el.textContent = '');
+  document.getElementById('checkboxTermoLinha').classList.remove('invalido');
+}
+
+function marcarInvalido(idOuEl, mensagem){
+  const el = typeof idOuEl === 'string' ? document.getElementById(idOuEl) : idOuEl;
+  if(el) el.classList.add('campo-invalido');
+  const chaveErro = typeof idOuEl === 'string' ? idOuEl : (el ? el.id : null);
+  const spanErro = document.querySelector(`[data-erro-de="${chaveErro}"]`);
+  if(spanErro) spanErro.textContent = mensagem;
+}
+
+function validarFormulario(){
+  limparErrosVisuais();
+  let valido = true;
+  let primeiroInvalido = null;
+
+  function checar(id, condicaoOK, mensagem){
+    if(!condicaoOK){
+      valido = false;
+      marcarInvalido(id, mensagem);
+      if(!primeiroInvalido) primeiroInvalido = document.getElementById(id);
+    }
+  }
+
+  const nome = document.getElementById('solNome').value.trim();
+  checar('solNome', nome.length>0, 'Informe o nome completo.');
+
+  const matricula = document.getElementById('solMatricula').value.trim();
+  checar('solMatricula', matricula.length>0, 'Informe a matrícula/registro.');
+
+  const vinculoMarcado = document.querySelector('input[name="solVinculo"]:checked');
+  if(!vinculoMarcado){
+    valido = false;
+    const span = document.querySelector('[data-erro-de="solVinculo"]');
+    if(span) span.textContent = 'Selecione o vínculo.';
+  }
+
+  const dataRetirada = document.getElementById('dataRetirada').value;
+  checar('dataRetirada', !!dataRetirada, 'Informe a data/hora de retirada.');
+
+  const dataPrevista = document.getElementById('dataDevolucaoPrevista').value;
+  checar('dataDevolucaoPrevista', !!dataPrevista, 'Informe a data/hora prevista de devolução.');
+
+  const finalidade = document.getElementById('finalidadeUso').value.trim();
+  checar('finalidadeUso', finalidade.length>0, 'Informe a finalidade de uso.');
+
+  const equipamentos = lerEquipamentosDoDOM();
+  const temEquipamentoValido = equipamentos.some(eq=> eq.tipo && eq.patrimonio);
+  if(!temEquipamentoValido){
+    valido = false;
+    const span = document.querySelector('[data-erro-de="equipamentos"]');
+    if(span) span.textContent = 'Adicione pelo menos um equipamento com tipo e nº de patrimônio/série.';
+  }
+
+  const termoAceito = document.getElementById('termoAceito').checked;
+  if(!termoAceito){
+    valido = false;
+    document.getElementById('checkboxTermoLinha').classList.add('invalido');
+    const span = document.querySelector('[data-erro-de="termoAceito"]');
+    if(span) span.textContent = 'É necessário concordar com o termo de responsabilidade.';
+  }
+
+  if(primeiroInvalido) primeiroInvalido.scrollIntoView({ behavior:'smooth', block:'center' });
+  return valido;
+}
+
+/* habilita "Salvar" apenas quando o termo é aceito */
+document.getElementById('termoAceito').addEventListener('change', (ev)=>{
+  document.getElementById('btnSalvarEmprestimo').disabled = !ev.target.checked;
+});
+
+/* =========================================================================
+   COLETA / PREENCHIMENTO DO FORMULÁRIO
+   ========================================================================= */
+function coletarRegistroDoFormulario(){
+  const equipamentos = lerEquipamentosDoDOM();
+  const conferencia = lerConferenciaDevolucaoDoDOM();
+  const vinculoEl = document.querySelector('input[name="solVinculo"]:checked');
+
+  const dataDevEfetiva = document.getElementById('dataDevolucaoEfetiva').value;
+  let status = document.getElementById('statusFinal').value || 'ativo';
+  if(!dataDevEfetiva && status !== 'nao_devolvido'){ status = 'ativo'; }
+
+  return {
+    id: registroAtualId,
+    codigo: registroAtualCodigo,
+    dataEmissao: registroAtualDataEmissao,
+    status: status,
+    solicitante: {
+      nome: document.getElementById('solNome').value.trim(),
+      matricula: document.getElementById('solMatricula').value.trim(),
+      vinculo: vinculoEl ? vinculoEl.value : '',
+      setorCurso: document.getElementById('solSetorCurso').value.trim(),
+      telefone: document.getElementById('solTelefone').value.trim(),
+      email: document.getElementById('solEmail').value.trim()
+    },
+    equipamentos: equipamentos,
+    periodo: {
+      dataRetirada: document.getElementById('dataRetirada').value,
+      dataDevolucaoPrevista: document.getElementById('dataDevolucaoPrevista').value,
+      finalidadeUso: document.getElementById('finalidadeUso').value.trim(),
+      localUso: document.getElementById('localUso').value.trim()
+    },
+    termoAceito: document.getElementById('termoAceito').checked,
+    entrega: {
+      assinaturaSolicitante: obterAssinaturaDataURL('sigSolicitante'),
+      assinaturaTI: obterAssinaturaDataURL('sigTIEntrega'),
+      nomeSolicitante: document.getElementById('entregaNomeSolicitante').value.trim(),
+      nomeTI: document.getElementById('entregaNomeTI').value.trim(),
+      data: document.getElementById('dataEntrega').value
+    },
+    devolucao: {
+      dataHoraEfetiva: dataDevEfetiva,
+      conferencia: conferencia,
+      observacoes: document.getElementById('obsDevolucao').value.trim(),
+      assinaturaTI: obterAssinaturaDataURL('sigTIDevolucao'),
+      nomeTI: document.getElementById('devolucaoNomeTI').value.trim(),
+      status: status
+    }
+  };
+}
+
+function preencherFormularioComRegistro(reg){
+  registroAtualId = reg.id;
+  registroAtualCodigo = reg.codigo;
+  registroAtualDataEmissao = reg.dataEmissao;
+
+  document.getElementById('campoCodigoEmprestimo').textContent = reg.codigo;
+  document.getElementById('campoDataEmissao').textContent = formatarDataHoraBR(reg.dataEmissao);
+
+  document.getElementById('solNome').value = reg.solicitante.nome || '';
+  document.getElementById('solMatricula').value = reg.solicitante.matricula || '';
+  document.getElementById('solSetorCurso').value = reg.solicitante.setorCurso || '';
+  document.getElementById('solTelefone').value = reg.solicitante.telefone || '';
+  document.getElementById('solEmail').value = reg.solicitante.email || '';
+  document.querySelectorAll('input[name="solVinculo"]').forEach(r=> r.checked = (r.value === reg.solicitante.vinculo));
+
+  document.getElementById('corpoTabelaEquipamentos').innerHTML = '';
+  (reg.equipamentos && reg.equipamentos.length ? reg.equipamentos : [{}]).forEach(eq=> adicionarLinhaEquipamento(eq));
+
+  document.getElementById('dataRetirada').value = reg.periodo?.dataRetirada || '';
+  document.getElementById('dataDevolucaoPrevista').value = reg.periodo?.dataDevolucaoPrevista || '';
+  document.getElementById('finalidadeUso').value = reg.periodo?.finalidadeUso || '';
+  document.getElementById('localUso').value = reg.periodo?.localUso || '';
+
+  document.getElementById('termoAceito').checked = !!reg.termoAceito;
+  document.getElementById('btnSalvarEmprestimo').disabled = !reg.termoAceito;
+
+  document.getElementById('entregaNomeSolicitante').value = reg.entrega?.nomeSolicitante || '';
+  document.getElementById('entregaNomeTI').value = reg.entrega?.nomeTI || '';
+  document.getElementById('dataEntrega').value = reg.entrega?.data || '';
+  restaurarAssinatura('sigSolicitante', reg.entrega?.assinaturaSolicitante || '');
+  restaurarAssinatura('sigTIEntrega', reg.entrega?.assinaturaTI || '');
+
+  document.getElementById('dataDevolucaoEfetiva').value = reg.devolucao?.dataHoraEfetiva || '';
+  document.getElementById('statusFinal').value = reg.status || 'ativo';
+  document.getElementById('obsDevolucao').value = reg.devolucao?.observacoes || '';
+  document.getElementById('devolucaoNomeTI').value = reg.devolucao?.nomeTI || '';
+  restaurarAssinatura('sigTIDevolucao', reg.devolucao?.assinaturaTI || '');
+
+  // repopula o cache de conferência (chaveado por uid) usando a ordem salva
+  Object.keys(conferenciaDevolucaoDados).forEach(k=> delete conferenciaDevolucaoDados[k]);
+  const linhasUid = Array.from(document.querySelectorAll('#corpoTabelaEquipamentos tr')).map(l=>l.getAttribute('data-uid'));
+  (reg.devolucao?.conferencia || []).forEach((c, idx)=>{
+    const uid = linhasUid[idx];
+    if(uid) conferenciaDevolucaoDados[uid] = { estado: c.estado, obs: c.obs };
+  });
+  renderizarConferenciaDevolucao();
+
+  limparErrosVisuais();
+}
+
+/* =========================================================================
+   AÇÕES: NOVO / LIMPAR / SALVAR
+   ========================================================================= */
+async function novoEmprestimo(perguntar){
+  if(perguntar && !confirm('Deseja iniciar um novo empréstimo? Os dados não salvos do formulário atual serão perdidos.')) return;
+
+  document.getElementById('formEmprestimo').reset();
+  document.getElementById('corpoTabelaEquipamentos').innerHTML = '';
+  document.getElementById('conferenciaDevolucaoContainer').innerHTML = '';
+  Object.keys(conferenciaDevolucaoDados).forEach(k=> delete conferenciaDevolucaoDados[k]);
+  ['sigSolicitante','sigTIEntrega','sigTIDevolucao'].forEach(limparAssinatura);
+  document.getElementById('btnSalvarEmprestimo').disabled = true;
+  limparErrosVisuais();
+
+  registroAtualId = null;
+  registroAtualDataEmissao = new Date().toISOString();
+  registroAtualCodigo = await proximoCodigoPreview();
+
+  document.getElementById('campoCodigoEmprestimo').textContent = registroAtualCodigo;
+  document.getElementById('campoDataEmissao').textContent = formatarDataHoraBR(registroAtualDataEmissao);
+
+  adicionarLinhaEquipamento();
+  mostrarView('form');
+}
+
+function limparFormulario(){
+  if(!confirm('Tem certeza que deseja limpar todos os campos preenchidos? Esta ação não pode ser desfeita.')) return;
+  novoEmprestimo(false);
+}
+
+document.getElementById('formEmprestimo').addEventListener('submit', async (ev)=>{
+  ev.preventDefault();
+  if(!validarFormulario()){
+    mostrarToast('Verifique os campos destacados em vinho.', 'erro');
+    return;
+  }
+  try{
+    const registro = coletarRegistroDoFormulario();
+    const ehNovo = !registro.id;
+
+    if(ehNovo){
+      registro.codigo = await incrementarContadorEGerarCodigo();
+      registro.dataEmissao = registroAtualDataEmissao || new Date().toISOString();
+    }
+    if(!registro.id) delete registro.id;
+
+    const idSalvo = await salvarRegistro(registro);
+    registroAtualId = idSalvo;
+    registroAtualCodigo = registro.codigo;
+    registroAtualDataEmissao = registro.dataEmissao;
+
+    document.getElementById('campoCodigoEmprestimo').textContent = registro.codigo;
+    document.getElementById('campoDataEmissao').textContent = formatarDataHoraBR(registro.dataEmissao);
+
+    mostrarToast(`Empréstimo ${registro.codigo} salvo com sucesso.`);
+    await carregarEmprestimos();
+  }catch(err){
+    console.error(err);
+    mostrarToast('Erro ao salvar o empréstimo. Veja o console para detalhes.', 'erro');
+  }
+});
+
+/* =========================================================================
+   PAINEL DE GESTÃO
+   ========================================================================= */
+async function carregarEmprestimos(){
+  todosRegistros = await listarRegistros();
+  renderizarTabelaGestao();
+}
+
+function statusEfetivo(reg){
+  if(reg.status === 'ativo'){
+    const prevista = reg.periodo?.dataDevolucaoPrevista;
+    if(prevista && new Date(prevista) < new Date()) return 'atrasado';
+    return 'ativo';
+  }
+  return reg.status;
+}
+
+function badgeStatus(statusEf){
+  const mapa = {
+    ativo: ['badge-ativo','Ativo'],
+    atrasado: ['badge-atrasado','Atrasado'],
+    devolvido_sem_pendencias: ['badge-ok','Devolvido'],
+    devolvido_com_pendencias: ['badge-pendencia','Com pendências'],
+    nao_devolvido: ['badge-naodevolvido','Não devolvido']
+  };
+  const [classe, rotulo] = mapa[statusEf] || ['badge-ativo', statusEf];
+  return `<span class="badge ${classe}">${rotulo}</span>`;
+}
+
+function renderizarTabelaGestao(){
+  const filtro = document.getElementById('filtroStatus').value;
+  const busca = document.getElementById('buscaGestao').value.trim().toLowerCase();
+
+  let lista = todosRegistros.map(reg=> ({ reg, statusEf: statusEfetivo(reg) }));
+
+  if(filtro !== 'todos'){
+    lista = lista.filter(({statusEf})=> statusEf === filtro);
+  }
+  if(busca){
+    lista = lista.filter(({reg})=>{
+      const nome = (reg.solicitante?.nome || '').toLowerCase();
+      const patrimonios = (reg.equipamentos||[]).map(e=>(e.patrimonio||'').toLowerCase()).join(' ');
+      return nome.includes(busca) || patrimonios.includes(busca);
+    });
+  }
+
+  lista.sort((a,b)=> new Date(b.reg.dataEmissao) - new Date(a.reg.dataEmissao));
+
+  const corpo = document.getElementById('corpoTabelaGestao');
+  const vazio = document.getElementById('estadoVazioGestao');
+
+  if(lista.length === 0){
+    corpo.innerHTML = '';
+    vazio.hidden = false;
+    return;
+  }
+  vazio.hidden = true;
+
+  corpo.innerHTML = lista.map(({reg, statusEf})=>{
+    const qtdItens = (reg.equipamentos||[]).length;
+    return `
+      <tr class="linha-emprestimo" tabindex="0" role="button"
+          aria-label="Abrir empréstimo ${escapeHTML(reg.codigo)}"
+          onclick="abrirRegistroNoFormulario(${reg.id})"
+          onkeydown="if(event.key==='Enter') abrirRegistroNoFormulario(${reg.id})">
+        <td><strong>${escapeHTML(reg.codigo)}</strong></td>
+        <td>${escapeHTML(reg.solicitante?.nome || '—')}</td>
+        <td>${escapeHTML(reg.solicitante?.setorCurso || '—')}</td>
+        <td>${formatarDataHoraBR(reg.periodo?.dataRetirada)}</td>
+        <td>${formatarDataHoraBR(reg.periodo?.dataDevolucaoPrevista)}</td>
+        <td>${qtdItens}</td>
+        <td>${badgeStatus(statusEf)}</td>
+      </tr>`;
+  }).join('');
+}
+
+async function abrirRegistroNoFormulario(id){
+  const reg = await obterRegistroPorId(id);
+  if(!reg){ mostrarToast('Registro não encontrado.', 'erro'); return; }
+  preencherFormularioComRegistro(reg);
+  mostrarView('form');
+}
+
+/* =========================================================================
+   EXPORTAÇÃO (backup local)
+   ========================================================================= */
+function baixarArquivo(nome, conteudo, tipo){
+  const blob = new Blob([conteudo], { type: tipo });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function exportarJSON(){
+  const registros = await listarRegistros();
+  baixarArquivo(`emprestimos_fco_${Date.now()}.json`, JSON.stringify(registros, null, 2), 'application/json');
+  mostrarToast('Backup em JSON gerado.');
+}
+
+async function exportarCSV(){
+  const registros = await listarRegistros();
+  const colunas = ['codigo','dataEmissao','status','nomeSolicitante','matricula','vinculo','setorCurso',
+    'telefone','email','equipamentos','dataRetirada','dataDevolucaoPrevista','finalidadeUso','localUso',
+    'dataDevolucaoEfetiva','observacoesDevolucao'];
+  const linhas = [colunas.join(',')];
+
+  registros.forEach(r=>{
+    const equipStr = (r.equipamentos||[]).map(e=> `${e.tipo||''} ${e.marcaModelo||''} (Pat.${e.patrimonio||''})`).join(' | ');
+    const campos = [
+      r.codigo, r.dataEmissao, r.status, r.solicitante?.nome, r.solicitante?.matricula, r.solicitante?.vinculo,
+      r.solicitante?.setorCurso, r.solicitante?.telefone, r.solicitante?.email, equipStr,
+      r.periodo?.dataRetirada, r.periodo?.dataDevolucaoPrevista, r.periodo?.finalidadeUso, r.periodo?.localUso,
+      r.devolucao?.dataHoraEfetiva, r.devolucao?.observacoes
+    ].map(csvEscape);
+    linhas.push(campos.join(','));
+  });
+
+  baixarArquivo(`emprestimos_fco_${Date.now()}.csv`, '﻿' + linhas.join('\r\n'), 'text/csv;charset=utf-8');
+  mostrarToast('Backup em CSV gerado.');
+}
+
+function csvEscape(valor){
+  const s = (valor === undefined || valor === null) ? '' : String(valor);
+  if(/[",;\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+  return s;
+}
+
+/* =========================================================================
+   INICIALIZAÇÃO
+   ========================================================================= */
+(async function iniciar(){
+  await abrirBanco();
+  ['sigSolicitante','sigTIEntrega','sigTIDevolucao'].forEach(iniciarCanvasAssinatura);
+  await novoEmprestimo(false);
+  await carregarEmprestimos();
+})();
+</script>
+</body>
+</html>
