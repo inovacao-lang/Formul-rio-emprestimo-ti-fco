@@ -502,6 +502,8 @@ table.tabela-gestao tr.linha-emprestimo:hover td{ background: rgba(0,99,242,0.06
               <button type="button" class="btn btn-outline btn-sm" onclick="limparAssinatura('sigSolicitante')">Limpar</button>
             </div>
           </div>
+          <label for="entregaNomeSolicitante" style="margin-top:6px;">Nome do solicitante (confirmação)</label>
+          <input type="text" id="entregaNomeSolicitante" name="entregaNomeSolicitante" placeholder="Alternativa simples à assinatura manual">
         </div>
         <div class="field">
           <label>Assinatura do responsável de TI (entrega)</label>
@@ -512,18 +514,8 @@ table.tabela-gestao tr.linha-emprestimo:hover td{ background: rgba(0,99,242,0.06
               <button type="button" class="btn btn-outline btn-sm" onclick="limparAssinatura('sigTIEntrega')">Limpar</button>
             </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="entregaNomeSolicitante">Nome do solicitante (confirmação)</label>
-          <input type="text" id="entregaNomeSolicitante" name="entregaNomeSolicitante" placeholder="Alternativa simples à assinatura manual">
-        </div>
-        <div class="field">
-          <label for="entregaNomeTI">Nome do responsável de TI (entrega)</label>
+          <label for="entregaNomeTI" style="margin-top:6px;">Nome do responsável de TI (entrega)</label>
           <input type="text" id="entregaNomeTI" name="entregaNomeTI">
-        </div>
-        <div class="field">
-          <label for="dataEntrega">Data da entrega</label>
-          <input type="date" id="dataEntrega" name="dataEntrega">
         </div>
       </div>
     </fieldset>
@@ -1068,8 +1060,7 @@ function coletarRegistroDoFormulario(){
       assinaturaSolicitante: obterAssinaturaDataURL('sigSolicitante'),
       assinaturaTI: obterAssinaturaDataURL('sigTIEntrega'),
       nomeSolicitante: document.getElementById('entregaNomeSolicitante').value.trim(),
-      nomeTI: document.getElementById('entregaNomeTI').value.trim(),
-      data: document.getElementById('dataEntrega').value
+      nomeTI: document.getElementById('entregaNomeTI').value.trim()
     },
     devolucao: {
       dataHoraEfetiva: dataDevEfetiva,
@@ -1110,7 +1101,6 @@ function preencherFormularioComRegistro(reg){
 
   document.getElementById('entregaNomeSolicitante').value = reg.entrega?.nomeSolicitante || '';
   document.getElementById('entregaNomeTI').value = reg.entrega?.nomeTI || '';
-  document.getElementById('dataEntrega').value = reg.entrega?.data || '';
   restaurarAssinatura('sigSolicitante', reg.entrega?.assinaturaSolicitante || '');
   restaurarAssinatura('sigTIEntrega', reg.entrega?.assinaturaTI || '');
 
