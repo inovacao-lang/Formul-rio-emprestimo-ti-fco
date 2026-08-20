@@ -323,18 +323,6 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
       </div>
       <div class="kpi-grid" style="margin-bottom:0;" id="projetoView">
         <div class="kpi-card">
-          <div class="kpi-label">Nome do Projeto</div>
-          <div class="kpi-value" style="font-size:1.1rem;" id="viewNome">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Responsável Técnico</div>
-          <div class="kpi-value" style="font-size:1.1rem;" id="viewResponsavel">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Endereço</div>
-          <div class="kpi-value" style="font-size:1.1rem;" id="viewEndereco">—</div>
-        </div>
-        <div class="kpi-card">
           <div class="kpi-label">Data de Início</div>
           <div class="kpi-value" style="font-size:1.1rem;" id="viewInicio">—</div>
         </div>
@@ -794,9 +782,6 @@ function aplicarFiltrosDiario(){
 
 /* ================================ RENDER ================================= */
 function renderProjeto(){
-  document.getElementById('viewNome').textContent = projeto?.nome || '—';
-  document.getElementById('viewResponsavel').textContent = projeto?.responsavel || '—';
-  document.getElementById('viewEndereco').textContent = projeto?.endereco || '—';
   document.getElementById('viewInicio').textContent = formatDateBR(projeto?.data_inicio);
 }
 
