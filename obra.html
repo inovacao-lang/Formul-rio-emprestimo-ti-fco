@@ -357,6 +357,10 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
           <div class="kpi-label">Data de Início</div>
           <div class="kpi-value" style="font-size:1.1rem;" id="viewInicio">—</div>
         </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Previsão de Término</div>
+          <div class="kpi-value" style="font-size:1.1rem;" id="viewPrevisao">—</div>
+        </div>
       </div>
 
       <form class="form-card hidden" id="formProjeto" style="margin-top:20px;">
@@ -376,6 +380,10 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
           <div class="field">
             <label for="inInicio">Data de Início</label>
             <input type="date" id="inInicio" required>
+          </div>
+          <div class="field">
+            <label for="inPrevisao">Previsão de Término</label>
+            <input type="date" id="inPrevisao">
           </div>
           <div class="field">
             <label for="inOrcamento">Orçamento Total (R$)</label>
@@ -844,10 +852,12 @@ function aplicarFiltrosDiario(){
 function renderProjeto(){
   document.getElementById('hdrResponsavel').textContent = projeto?.responsavel || '—';
   document.getElementById('hdrInicio').textContent = formatDateBR(projeto?.data_inicio);
+  document.getElementById('hdrPrevisao').textContent = formatDateBR(projeto?.previsao_termino);
   document.getElementById('viewNome').textContent = projeto?.nome || '—';
   document.getElementById('viewResponsavel').textContent = projeto?.responsavel || '—';
   document.getElementById('viewEndereco').textContent = projeto?.endereco || '—';
   document.getElementById('viewInicio').textContent = formatDateBR(projeto?.data_inicio);
+  document.getElementById('viewPrevisao').textContent = formatDateBR(projeto?.previsao_termino);
 }
 
 function aplicarSemaforo(elId, cardId, classe){
@@ -903,9 +913,6 @@ function renderCharts(ind){
 
 function renderPainel(){
   const ind = calcIndicadores();
-
-  document.getElementById('hdrPrevisao').textContent = ind.previsaoTermino
-    ? ind.previsaoTermino.toLocaleDateString('pt-BR') : '—';
 
   document.getElementById('kpiPctGeral').textContent = formatPercent(ind.pctGeral);
   document.getElementById('kpiPctGeralBar').style.width = (ind.pctGeral*100) + '%';
@@ -1161,6 +1168,7 @@ document.getElementById('btnEditarProjeto').addEventListener('click', () => {
   document.getElementById('inResponsavel').value = projeto?.responsavel || '';
   document.getElementById('inEndereco').value = projeto?.endereco || '';
   document.getElementById('inInicio').value = projeto?.data_inicio || '';
+  document.getElementById('inPrevisao').value = projeto?.previsao_termino || '';
   document.getElementById('inOrcamento').value = projeto?.orcamento_total ?? 0;
   document.getElementById('inRealizado').value = projeto?.valor_realizado ?? 0;
   formProjeto.classList.remove('hidden');
@@ -1175,6 +1183,7 @@ formProjeto.addEventListener('submit', async (e) => {
     responsavel: document.getElementById('inResponsavel').value.trim(),
     endereco: document.getElementById('inEndereco').value.trim(),
     data_inicio: document.getElementById('inInicio').value,
+    previsao_termino: document.getElementById('inPrevisao').value || null,
     orcamento_total: parseFloat(document.getElementById('inOrcamento').value) || 0,
     valor_realizado: parseFloat(document.getElementById('inRealizado').value) || 0,
     updated_at: new Date().toISOString(),
