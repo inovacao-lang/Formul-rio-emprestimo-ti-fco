@@ -13,8 +13,6 @@
 
 <!-- Cliente Supabase (armazenamento em nuvem, acesso público sem login). Versão fixada por segurança. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3/dist/umd/supabase.js"></script>
-<!-- Chart.js (gráficos do Dashboard). Versão fixada por segurança. -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
 <style>
 :root{
@@ -150,11 +148,6 @@ h1,h2,h3{ color: var(--azul-marinho); margin:0 0 4px; letter-spacing:-0.01em; }
   border-radius: 999px;
   transition: width .4s ease;
 }
-
-/* ================================ GRÁFICOS ================================= */
-.charts-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
-.chart-box{ position:relative; height:280px; }
-.chart-title{ font-size:0.78rem; color:var(--cinza-texto); margin-bottom:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em;}
 
 /* ============================ STATUS BARRAS =============================== */
 .status-bars{ display:flex; flex-direction:column; gap:10px; }
@@ -387,18 +380,6 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
         <div class="kpi-value" id="kpiPctGeral">0,0%</div>
         <div class="progress-track"><div class="progress-fill" id="kpiPctGeralBar" style="width:0%;"></div></div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Orçamento Total</div>
-        <div class="kpi-value" id="kpiOrcamento">R$ 0,00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Valor Realizado</div>
-        <div class="kpi-value" id="kpiRealizado">R$ 0,00</div>
-      </div>
-      <div class="kpi-card" id="kpiCardSaldo">
-        <div class="kpi-label">Saldo</div>
-        <div class="kpi-value" id="kpiSaldo">R$ 0,00</div>
-      </div>
       <div class="kpi-card" id="kpiCardDias">
         <div class="kpi-label">Dias Restantes p/ Prazo Final</div>
         <div class="kpi-value" id="kpiDiasRestantes">—</div>
@@ -406,21 +387,6 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
       <div class="kpi-card" id="kpiCardAtraso">
         <div class="kpi-label">Atividades em Atraso</div>
         <div class="kpi-value" id="kpiAtividadesAtraso">0</div>
-      </div>
-    </div>
-
-    <!-- GRÁFICOS -->
-    <div class="section-card">
-      <h2>Gráficos</h2>
-      <div class="charts-grid">
-        <div>
-          <div class="chart-title">Status das Atividades</div>
-          <div class="chart-box"><canvas id="chartStatus"></canvas></div>
-        </div>
-        <div>
-          <div class="chart-title">Orçamento x Realizado</div>
-          <div class="chart-box"><canvas id="chartOrcamento"></canvas></div>
-        </div>
       </div>
     </div>
 
@@ -659,8 +625,6 @@ let cronograma = [];
 let diario = [];
 let cronoSort = { key: 'ordem', dir: 'asc' };
 let cronoFiltro = { etapa: '', responsavel: '', status: '' };
-let statusChart = null;
-let orcamentoChart = null;
 
 /* ============================== UTILITÁRIOS ============================== */
 function esc(str){
@@ -846,63 +810,17 @@ function aplicarSemaforo(elId, cardId, classe){
   }
 }
 
-function renderCharts(ind){
-  const statusData = {
-    labels: ['Concluído','Em andamento','Atrasado','Não iniciado'],
-    datasets: [{
-      data: [ind.statusCounts['Concluído'], ind.statusCounts['Em andamento'], ind.statusCounts['Atrasado'], ind.statusCounts['Não iniciado']],
-      backgroundColor: ['#1E8C50','#0063F2','#A10A37','#B7B7B7'],
-      borderWidth: 0,
-    }]
-  };
-  if (statusChart){ statusChart.data = statusData; statusChart.update(); }
-  else {
-    statusChart = new Chart(document.getElementById('chartStatus'), {
-      type: 'doughnut',
-      data: statusData,
-      options: {
-        responsive: true, maintainAspectRatio: false, cutout: '62%',
-        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } } }
-      }
-    });
-  }
-
-  const orcColor = ind.realizado > ind.orcamento ? '#A10A37' : '#0063F2';
-  const orcData = {
-    labels: ['Orçamento Total','Valor Realizado'],
-    datasets: [{ data: [ind.orcamento, ind.realizado], backgroundColor: ['#0F2B56', orcColor], borderRadius: 6, maxBarThickness: 70 }]
-  };
-  if (orcamentoChart){ orcamentoChart.data = orcData; orcamentoChart.update(); }
-  else {
-    orcamentoChart = new Chart(document.getElementById('chartOrcamento'), {
-      type: 'bar',
-      data: orcData,
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { callback: (v) => formatMoeda(v) } } }
-      }
-    });
-  }
-}
-
 function renderPainel(){
   const ind = calcIndicadores();
 
   document.getElementById('kpiPctGeral').textContent = formatPercent(ind.pctGeral);
   document.getElementById('kpiPctGeralBar').style.width = (ind.pctGeral*100) + '%';
-  document.getElementById('kpiOrcamento').textContent = formatMoeda(ind.orcamento);
-  document.getElementById('kpiRealizado').textContent = formatMoeda(ind.realizado);
-  document.getElementById('kpiSaldo').textContent = formatMoeda(ind.saldo);
   document.getElementById('kpiDiasRestantes').textContent = ind.diasRestantes === null ? '—' : ind.diasRestantes;
   document.getElementById('kpiAtividadesAtraso').textContent = ind.statusCounts['Atrasado'];
 
-  aplicarSemaforo('kpiSaldo', 'kpiCardSaldo', ind.saldo < 0 ? 'alerta' : 'bom');
   aplicarSemaforo('kpiDiasRestantes', 'kpiCardDias',
     ind.diasRestantes === null ? '' : (ind.diasRestantes < 0 ? 'alerta' : (ind.diasRestantes <= 7 ? 'atencao' : 'bom')));
   aplicarSemaforo('kpiAtividadesAtraso', 'kpiCardAtraso', ind.statusCounts['Atrasado'] > 0 ? 'alerta' : 'bom');
-
-  renderCharts(ind);
 
   const total = ind.linhas.length;
   document.getElementById('statusTitulo').textContent = `Status das Atividades (Cronograma) — ${total} no total`;
