@@ -59,25 +59,17 @@ h1,h2,h3{ color: var(--azul-marinho); margin:0 0 4px; letter-spacing:-0.01em; }
   border-radius: var(--raio);
   box-shadow: var(--sombra);
   padding: 36px 40px;
+  position: relative;
   display:flex;
-  gap:20px;
   align-items:center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  justify-content: center;
   margin-bottom: 24px;
 }
-.header-brand{ display:flex; align-items:center; gap:16px; }
+.header-brand{ position:absolute; left:40px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:16px; }
 .header-logo-img{ height:56px; width:auto; display:block; }
-.header-title{ flex:1; text-align:center; }
+.header-title{ text-align:center; }
 .header-title h1{ font-size:1.5rem; letter-spacing:-0.02em; }
 .header-title p{ margin:4px 0 0; color:var(--cinza-texto); font-size:0.9rem;}
-.header-meta{
-  text-align:right;
-  font-size:0.85rem;
-  color: var(--azul-marinho);
-  line-height:1.5;
-}
-.header-meta strong{ display:block; font-size:0.9rem; }
 
 /* ================================ ABAS =================================== */
 .tabs{
@@ -295,9 +287,9 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
 .app-footer{ max-width:1100px; margin:0 auto; padding:8px 24px 40px; text-align:center; font-size:0.8rem; color:var(--cinza-texto); }
 
 @media (max-width:640px){
-  .header-card{ flex-direction:column; align-items:flex-start; text-align:left; }
-  .header-title{ text-align:left; }
-  .header-meta{ text-align:left; }
+  .header-card{ flex-direction:column; align-items:center; text-align:center; }
+  .header-brand{ position:static; transform:none; margin-bottom:12px; }
+  .header-title{ text-align:center; }
   .diario-item{ grid-template-columns: 1fr; }
   .field.span-2{ grid-column: span 1; }
   .status-bar-row{ grid-template-columns: 100px 1fr 40px; }
@@ -316,11 +308,6 @@ td.atraso-pos{ color:var(--vinho); font-weight:700; }
     <div class="header-title">
       <h1>Painel de Controle da Obra / Reforma</h1>
       <p>Acompanhamento de cronograma, orçamento e diário da obra</p>
-    </div>
-    <div class="header-meta">
-      Responsável Técnico <strong id="hdrResponsavel">—</strong>
-      Início <strong id="hdrInicio">—</strong>
-      Previsão de término <strong id="hdrPrevisao">—</strong>
     </div>
   </header>
 
@@ -842,8 +829,6 @@ function aplicarFiltrosDiario(){
 
 /* ================================ RENDER ================================= */
 function renderProjeto(){
-  document.getElementById('hdrResponsavel').textContent = projeto?.responsavel || '—';
-  document.getElementById('hdrInicio').textContent = formatDateBR(projeto?.data_inicio);
   document.getElementById('viewNome').textContent = projeto?.nome || '—';
   document.getElementById('viewResponsavel').textContent = projeto?.responsavel || '—';
   document.getElementById('viewEndereco').textContent = projeto?.endereco || '—';
@@ -903,9 +888,6 @@ function renderCharts(ind){
 
 function renderPainel(){
   const ind = calcIndicadores();
-
-  document.getElementById('hdrPrevisao').textContent = ind.previsaoTermino
-    ? ind.previsaoTermino.toLocaleDateString('pt-BR') : '—';
 
   document.getElementById('kpiPctGeral').textContent = formatPercent(ind.pctGeral);
   document.getElementById('kpiPctGeralBar').style.width = (ind.pctGeral*100) + '%';
