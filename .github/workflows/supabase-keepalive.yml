@@ -1,0 +1,20 @@
+name: Supabase keep-alive
+
+# Faz uma consulta leve ao banco para o Supabase (plano gratuito) não pausar o projeto por inatividade.
+# Roda segunda e quinta às 12:00 UTC (margem dentro do limite de 7 dias) e pode ser disparado manualmente.
+on:
+  schedule:
+    - cron: "0 12 * * 1,4"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consulta ao Supabase
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --retry 3 --retry-delay 10 \
+            "https://jjjqklbdtntknoyidutz.supabase.co/rest/v1/emprestimos?select=id&limit=1" \
+            -H "apikey: sb_publishable_KvWMWcthbmNdgtRUkCjLBw_5BBLxJ_X")
+          echo "HTTP $code"
+          test "$code" = "200"
