@@ -7,19 +7,19 @@
 <title>Jogo da Memória FCO — Mobile</title>
 <style>
   :root {
-    --verde: #1b8c76;
-    --verde-escuro: #0f5a4d;
-    --vermelho: #c53b33;
-    --azul: #1f3a5f;
-    --fundo: #eef5f3;
+    --verde: #1f5fa8;
+    --verde-escuro: #0d3b73;
+    --vermelho: #000000;
+    --azul: #000000;
+    --fundo: #ffffff;
     --branco: #ffffff;
-    --texto: #1d2b2a;
+    --texto: #000000;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
   body {
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-    background: linear-gradient(170deg, var(--fundo) 0%, #d9ebe6 100%);
+    background: #ffffff;
     color: var(--texto);
     display: flex;
     flex-direction: column;
@@ -29,9 +29,9 @@
     min-height: 100vh;
   }
   header { width: 100%; max-width: 480px; text-align: center; }
-  .titulo h1 { font-size: 24px; color: var(--verde-escuro); letter-spacing: -0.3px; line-height: 1.15; }
-  .titulo h1 span { color: var(--vermelho); }
-  .titulo p { color: #4a6260; font-size: 13px; margin-top: 4px; }
+  .titulo h1 { font-size: 24px; color: #000000; letter-spacing: -0.3px; line-height: 1.15; }
+  .titulo h1 span { color: inherit; }
+  .titulo p { color: #000000; font-size: 13px; margin-top: 4px; }
 
   .stats {
     display: grid;
@@ -44,24 +44,25 @@
     border-radius: 12px;
     padding: 8px 4px;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(15, 90, 77, 0.12);
+    box-shadow: 0 2px 6px rgba(31, 95, 168, 0.15);
+    border: 1px solid #c9d8ec;
   }
-  .stat small { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #6a8482; }
+  .stat small { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #000000; }
   .stat strong { font-size: 18px; color: var(--azul); font-variant-numeric: tabular-nums; }
 
   .btn {
     width: 100%;
-    background: var(--verde);
-    color: var(--branco);
-    border: none;
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid var(--verde);
     border-radius: 12px;
     padding: 14px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(27, 140, 118, 0.35);
+    box-shadow: 0 4px 10px rgba(31, 95, 168, 0.25);
   }
-  .btn:active { background: var(--verde-escuro); transform: scale(0.98); }
+  .btn:active { background: #e6effa; transform: scale(0.98); }
 
   .tabuleiro {
     width: 100%;
@@ -97,7 +98,7 @@
     box-shadow: 0 3px 8px rgba(31, 58, 95, 0.18);
   }
   .back {
-    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-escuro) 100%);
+    background: linear-gradient(135deg, #1f5fa8 0%, #0d3b73 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -117,11 +118,11 @@
     margin-top: 14px;
     min-height: 22px;
     font-size: 14px;
-    color: var(--verde-escuro);
+    color: #000000;
     font-weight: 600;
     text-align: center;
   }
-  footer { margin-top: 12px; font-size: 11px; color: #6a8482; text-align: center; }
+  footer { margin-top: 12px; font-size: 11px; color: #000000; text-align: center; }
 
   .overlay {
     position: fixed;
@@ -143,12 +144,12 @@
     max-width: 340px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   }
-  .modal h2 { font-size: 26px; color: var(--verde-escuro); margin-bottom: 6px; }
-  .modal p { color: #4a6260; margin-bottom: 16px; font-size: 15px; }
+  .modal h2 { font-size: 26px; color: #000000; margin-bottom: 6px; }
+  .modal p { color: #000000; margin-bottom: 16px; font-size: 15px; }
   .modal .resumo { display: flex; gap: 10px; margin-bottom: 20px; }
   .modal .resumo div { flex: 1; background: var(--fundo); border-radius: 12px; padding: 10px; }
   .modal .resumo strong { display: block; font-size: 22px; color: var(--azul); font-variant-numeric: tabular-nums; }
-  .modal .resumo small { font-size: 10px; color: #6a8482; text-transform: uppercase; letter-spacing: 0.8px; }
+  .modal .resumo small { font-size: 10px; color: #000000; text-transform: uppercase; letter-spacing: 0.8px; }
 </style>
 </head>
 <body>
