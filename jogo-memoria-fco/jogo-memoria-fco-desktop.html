@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo da Memória FCO — Desktop</title>
+<style>
+  :root {
+    --verde: #1f5fa8;
+    --verde-escuro: #0d3b73;
+    --vermelho: #000000;
+    --azul: #000000;
+    --fundo: #ffffff;
+    --branco: #ffffff;
+    --texto: #000000;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+    background: #ffffff;
+    color: var(--texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px 48px;
+  }
+  .logo {
+    width: 100%;
+    max-width: 1180px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+  .logo-wrap { position: relative; display: inline-block; margin-top: 64px; }
+  .logo-wrap img { height: 120px; width: auto; display: block; }
+  .chapeu {
+    position: absolute;
+    width: 42%;
+    left: -3%;
+    top: -54%;
+    transform: rotate(-8deg);
+    transform-origin: 50% 100%;
+    filter: drop-shadow(rgba(0, 0, 0, 0.25) 0px 3px 4px);
+    overflow: visible;
+  }
+  header {
+    width: 100%;
+    max-width: 1180px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .titulo h1 {
+    font-size: 30px;
+    color: #000000;
+    letter-spacing: -0.5px;
+  }
+  .titulo h1 span { color: inherit; }
+  .titulo p { color: #000000; font-size: 14px; margin-top: 4px; }
+  .stats { display: flex; gap: 12px; align-items: center; }
+  .stat {
+    background: var(--branco);
+    border-radius: 12px;
+    padding: 10px 18px;
+    min-width: 110px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(31, 95, 168, 0.15);
+    border: 1px solid #c9d8ec;
+  }
+  .stat small { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #000000; }
+  .stat strong { font-size: 22px; color: var(--azul); font-variant-numeric: tabular-nums; }
+  .btn {
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid var(--verde);
+    border-radius: 12px;
+    padding: 14px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 12px rgba(31, 95, 168, 0.25);
+  }
+  .btn:hover { background: #e6effa; transform: translateY(-2px); }
+
+  .tabuleiro {
+    width: 100%;
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+  }
+  .card {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    perspective: 1000px;
+    cursor: pointer;
+    border-radius: 14px;
+    user-select: none;
+    outline: none;
+  }
+  .card .inner {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.55s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+    border-radius: 14px;
+  }
+  .card.flipped .inner, .card.matched .inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 6px 16px rgba(31, 58, 95, 0.18);
+  }
+  .back {
+    background: linear-gradient(135deg, #1f5fa8 0%, #0d3b73 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--branco);
+  }
+  .back img {
+    width: 42%;
+    height: auto;
+    opacity: 0.92;
+    filter: brightness(0) invert(1);
+  }
+  .front {
+    transform: rotateY(180deg);
+    background: var(--branco);
+    border: 4px solid var(--branco);
+  }
+  .front img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card.matched .front { box-shadow: 0 0 0 4px #f5b82e, 0 6px 16px rgba(31,58,95,0.18); }
+  .card.matched { animation: pulso 0.6s ease; }
+  @keyframes pulso {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .card:not(.flipped):not(.matched):hover .inner { transform: translateY(-4px) rotateY(4deg); }
+  .card:focus-visible { box-shadow: 0 0 0 3px var(--vermelho); }
+
+  #legenda {
+    margin-top: 26px;
+    min-height: 26px;
+    font-size: 16px;
+    color: #000000;
+    font-weight: 600;
+    text-align: center;
+  }
+  footer { margin-top: 18px; font-size: 12px; color: #000000; text-align: center; }
+  footer .frase { margin-top: 4px; font-size: 14px; font-weight: 600; font-style: italic; }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 40, 38, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 20px;
+  }
+  .overlay.ativo { display: flex; }
+  .modal {
+    background: var(--branco);
+    border-radius: 20px;
+    padding: 40px 44px;
+    text-align: center;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    animation: entrada 0.4s ease;
+  }
+  @keyframes entrada { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal h2 { font-size: 28px; color: #000000; margin-bottom: 8px; }
+  .modal p { color: #000000; margin-bottom: 18px; }
+  .modal .resumo { display: flex; gap: 14px; justify-content: center; margin-bottom: 24px; }
+  .modal .resumo div {
+    border: 1px solid #c9d8ec;
+    background: var(--fundo);
+    border-radius: 12px;
+    padding: 12px 18px;
+    min-width: 120px;
+  }
+  .modal .resumo strong { display: block; font-size: 24px; color: var(--azul); font-variant-numeric: tabular-nums; }
+  .modal .resumo small { font-size: 12px; color: #000000; text-transform: uppercase; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <div class="logo-wrap">
+    <img src="img/logo-fco.webp" alt="Logo Faculdade FCO">
+    <svg class="chapeu" viewBox="0 0 200 145" aria-hidden="true">
+      <path d="M24 112 C30 62 78 22 132 28 C158 31 172 50 168 76 L180 112 Z" fill="#2c5697"/>
+      <path d="M24 112 C30 62 78 22 132 28 C100 40 62 66 54 112 Z" fill="#1f4378" opacity=".55"/>
+      <circle cx="166" cy="36" r="17" fill="#fff" stroke="#2c5697" stroke-width="4"/>
+      <rect x="6" y="100" width="190" height="40" rx="20" fill="#fff" stroke="#2c5697" stroke-width="4"/>
+    </svg>
+  </div>
+</div>
+
+<header>
+  <div class="titulo">
+    <h1>Jogo da <span>Memória</span> FCO</h1>
+    <p>Encontre os pares de fotos da Faculdade FCO</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><small>Movimentos</small><strong id="movimentos">0</strong></div>
+    <div class="stat"><small>Tempo</small><strong id="tempo">00:00</strong></div>
+    <div class="stat"><small>Pares</small><strong id="pares">0 / 9</strong></div>
+    <button class="btn" id="reiniciar">Reiniciar</button>
+  </div>
+</header>
+
+<main class="tabuleiro" id="tabuleiro" aria-label="Tabuleiro do jogo da memória"></main>
+
+<div id="legenda" aria-live="polite"></div>
+<footer>
+  <p>Faculdade FCO</p>
+  <p class="frase">FCO está onde a vida acontece</p>
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>Parabéns!</h2>
+    <p>Você encontrou todos os pares.</p>
+    <div class="resumo">
+      <div><small>Movimentos</small><strong id="final-mov">0</strong></div>
+      <div><small>Tempo</small><strong id="final-tempo">00:00</strong></div>
+    </div>
+    <button class="btn" id="jogar-de-novo">Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+  const FOTOS = [
+    { src: 'img/foto-1.jpg', nome: 'Pátio com jardim vertical' },
+    { src: 'img/foto-2.jpg', nome: 'Entrada com totens de vestibular' },
+    { src: 'img/foto-3.jpg', nome: 'Fachada com a marca FCO' },
+    { src: 'img/foto-4.jpg', nome: 'Corredor “Sou FCO”' },
+    { src: 'img/foto-5.jpg', nome: 'Biblioteca' },
+    { src: 'img/foto-6.jpg', nome: 'Laboratório de informática' },
+    { src: 'img/foto-7.jpg', nome: 'Prédio e área externa' },
+    { src: 'img/foto-8.jpg', nome: 'Recepção e catraca' },
+    { src: 'img/foto-9.jpg', nome: 'Fachada do prédio' }
+  ];
+
+  const tabuleiro = document.getElementById('tabuleiro');
+  const elMov = document.getElementById('movimentos');
+  const elTempo = document.getElementById('tempo');
+  const elPares = document.getElementById('pares');
+  const elLegenda = document.getElementById('legenda');
+  const overlay = document.getElementById('overlay');
+
+  let primeiro, segundo, travado, movimentos, pares, inicio, timer, iniciado;
+
+  function embaralhar(lista) {
+    for (let i = lista.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [lista[i], lista[j]] = [lista[j], lista[i]];
+    }
+    return lista;
+  }
+
+  function formatar(ms) {
+    const s = Math.floor(ms / 1000);
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function atualizarPlacar() {
+    elMov.textContent = movimentos;
+    elPares.textContent = pares + ' / ' + FOTOS.length;
+  }
+
+  function iniciarCronometro() {
+    iniciado = true;
+    inicio = Date.now();
+    timer = setInterval(() => { elTempo.textContent = formatar(Date.now() - inicio); }, 250);
+  }
+
+  function pararCronometro() {
+    clearInterval(timer);
+    return Date.now() - inicio;
+  }
+
+  function criarJogo() {
+    clearInterval(timer);
+    primeiro = segundo = null;
+    travado = false;
+    movimentos = 0;
+    pares = 0;
+    iniciado = false;
+    elTempo.textContent = '00:00';
+    elLegenda.textContent = '';
+    overlay.classList.remove('ativo');
+    atualizarPlacar();
+
+    const baralho = embaralhar(FOTOS.concat(FOTOS).map((f, i) => ({ ...f, par: f.src, uid: i })));
+    tabuleiro.innerHTML = '';
+    baralho.forEach(carta => {
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.tabIndex = 0;
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-label', 'Carta virada para baixo');
+      el.dataset.par = carta.par;
+      el.dataset.nome = carta.nome;
+      el.innerHTML =
+        '<div class="inner">' +
+          '<div class="face back"><img src="img/verso.webp" alt=""></div>' +
+          '<div class="face front"><img src="' + carta.src + '" alt="' + carta.nome + '"></div>' +
+        '</div>';
+      el.addEventListener('click', () => virar(el));
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); virar(el); } });
+      tabuleiro.appendChild(el);
+    });
+  }
+
+  function virar(el) {
+    if (travado || el.classList.contains('flipped') || el.classList.contains('matched')) return;
+    if (!iniciado) iniciarCronometro();
+
+    el.classList.add('flipped');
+    el.setAttribute('aria-label', el.dataset.nome);
+
+    if (!primeiro) { primeiro = el; return; }
+
+    segundo = el;
+    movimentos++;
+    atualizarPlacar();
+
+    if (primeiro.dataset.par === segundo.dataset.par) {
+      primeiro.classList.replace('flipped', 'matched');
+      segundo.classList.replace('flipped', 'matched');
+      pares++;
+      atualizarPlacar();
+      elLegenda.textContent = '✔ ' + primeiro.dataset.nome;
+      primeiro = segundo = null;
+      if (pares === FOTOS.length) vencer();
+    } else {
+      travado = true;
+      const a = primeiro, b = segundo;
+      setTimeout(() => {
+        [a, b].forEach(c => {
+          c.classList.remove('flipped');
+          c.setAttribute('aria-label', 'Carta virada para baixo');
+        });
+        primeiro = segundo = null;
+        travado = false;
+      }, 900);
+    }
+  }
+
+  function vencer() {
+    const tempo = pararCronometro();
+    document.getElementById('final-mov').textContent = movimentos;
+    document.getElementById('final-tempo').textContent = formatar(tempo);
+    setTimeout(() => overlay.classList.add('ativo'), 700);
+  }
+
+  document.getElementById('reiniciar').addEventListener('click', criarJogo);
+  document.getElementById('jogar-de-novo').addEventListener('click', criarJogo);
+
+  criarJogo();
+</script>
+</body>
+</html>
