@@ -123,6 +123,9 @@
     text-align: center;
   }
   footer { margin-top: 12px; font-size: 11px; color: #000000; text-align: center; }
+  footer .frase { margin-top: 4px; font-size: 13px; font-weight: 600; font-style: italic; }
+  .logo { background: #1f5fa8; border-radius: 14px; padding: 12px 16px 10px; display: flex; justify-content: center; margin-bottom: 14px; box-shadow: 0 3px 10px rgba(31, 95, 168, 0.3); }
+  .logo img { height: 84px; width: auto; display: block; }
 
   .overlay {
     position: fixed;
@@ -154,10 +157,14 @@
 </head>
 <body>
 
+<div class="logo">
+  <img src="img/logo-fco-natal.webp" alt="Logo FCO com chapéu de Natal">
+</div>
+
 <header>
   <div class="titulo">
     <h1>Jogo da <span>Memória</span> FCO</h1>
-    <p>Encontre os pares de fotos da Faculdade Facionorte</p>
+    <p>Encontre os pares de fotos da Faculdade FCO</p>
   </div>
   <div class="stats">
     <div class="stat"><small>Movim.</small><strong id="movimentos">0</strong></div>
@@ -170,7 +177,10 @@
 <main class="tabuleiro" id="tabuleiro" aria-label="Tabuleiro do jogo da memória"></main>
 
 <div id="legenda" aria-live="polite"></div>
-<footer>Faculdade Facionorte · Especializada em Odontologia</footer>
+<footer>
+  <p>Faculdade FCO · Especializada em Odontologia</p>
+  <p class="frase">FCO está onde a vida acontece</p>
+</footer>
 
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -188,8 +198,8 @@
   const FOTOS = [
     { src: 'img/foto-1.jpg', nome: 'Pátio com jardim vertical' },
     { src: 'img/foto-2.jpg', nome: 'Entrada com totens de vestibular' },
-    { src: 'img/foto-3.jpg', nome: 'Fachada com a marca FACIONORTE' },
-    { src: 'img/foto-4.jpg', nome: 'Corredor “Sou Facionorte”' },
+    { src: 'img/foto-3.jpg', nome: 'Fachada com a marca FCO' },
+    { src: 'img/foto-4.jpg', nome: 'Corredor “Sou FCO”' },
     { src: 'img/foto-5.jpg', nome: 'Biblioteca' },
     { src: 'img/foto-6.jpg', nome: 'Laboratório de informática' },
     { src: 'img/foto-7.jpg', nome: 'Prédio e área externa' },
