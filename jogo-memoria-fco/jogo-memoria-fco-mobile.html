@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f5a4d">
+<title>Jogo da Memória FCO — Mobile</title>
+<style>
+  :root {
+    --verde: #1b8c76;
+    --verde-escuro: #0f5a4d;
+    --vermelho: #c53b33;
+    --azul: #1f3a5f;
+    --fundo: #eef5f3;
+    --branco: #ffffff;
+    --texto: #1d2b2a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background: linear-gradient(170deg, var(--fundo) 0%, #d9ebe6 100%);
+    color: var(--texto);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 14px 20px;
+    touch-action: manipulation;
+    min-height: 100vh;
+  }
+  header { width: 100%; max-width: 480px; text-align: center; }
+  .titulo h1 { font-size: 24px; color: var(--verde-escuro); letter-spacing: -0.3px; line-height: 1.15; }
+  .titulo h1 span { color: var(--vermelho); }
+  .titulo p { color: #4a6260; font-size: 13px; margin-top: 4px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 14px 0 12px;
+  }
+  .stat {
+    background: var(--branco);
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(15, 90, 77, 0.12);
+  }
+  .stat small { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #6a8482; }
+  .stat strong { font-size: 18px; color: var(--azul); font-variant-numeric: tabular-nums; }
+
+  .btn {
+    width: 100%;
+    background: var(--verde);
+    color: var(--branco);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(27, 140, 118, 0.35);
+  }
+  .btn:active { background: var(--verde-escuro); transform: scale(0.98); }
+
+  .tabuleiro {
+    width: 100%;
+    max-width: 480px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .card {
+    position: relative;
+    aspect-ratio: 4 / 3.4;
+    perspective: 800px;
+    cursor: pointer;
+    border-radius: 12px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .card .inner {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.5s cubic-bezier(.4,.2,.2,1);
+    transform-style: preserve-3d;
+  }
+  .card.flipped .inner, .card.matched .inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 3px 8px rgba(31, 58, 95, 0.18);
+  }
+  .back {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-escuro) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--branco);
+  }
+  .back img { width: 46%; height: auto; filter: brightness(0) invert(1); opacity: 0.92; }
+  .front {
+    transform: rotateY(180deg);
+    background: var(--branco);
+    border: 3px solid var(--branco);
+  }
+  .front img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card.matched .front { box-shadow: 0 0 0 3px #f5b82e, 0 3px 8px rgba(31,58,95,0.18); }
+  .card.matched { opacity: 0.85; }
+
+  #legenda {
+    margin-top: 14px;
+    min-height: 22px;
+    font-size: 14px;
+    color: var(--verde-escuro);
+    font-weight: 600;
+    text-align: center;
+  }
+  footer { margin-top: 12px; font-size: 11px; color: #6a8482; text-align: center; }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 40, 38, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 20px;
+  }
+  .overlay.ativo { display: flex; }
+  .modal {
+    background: var(--branco);
+    border-radius: 20px;
+    padding: 28px 22px;
+    text-align: center;
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+  .modal h2 { font-size: 26px; color: var(--verde-escuro); margin-bottom: 6px; }
+  .modal p { color: #4a6260; margin-bottom: 16px; font-size: 15px; }
+  .modal .resumo { display: flex; gap: 10px; margin-bottom: 20px; }
+  .modal .resumo div { flex: 1; background: var(--fundo); border-radius: 12px; padding: 10px; }
+  .modal .resumo strong { display: block; font-size: 22px; color: var(--azul); font-variant-numeric: tabular-nums; }
+  .modal .resumo small { font-size: 10px; color: #6a8482; text-transform: uppercase; letter-spacing: 0.8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="titulo">
+    <h1>Jogo da <span>Memória</span> FCO</h1>
+    <p>Encontre os pares de fotos da Faculdade Facionorte</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><small>Movim.</small><strong id="movimentos">0</strong></div>
+    <div class="stat"><small>Tempo</small><strong id="tempo">00:00</strong></div>
+    <div class="stat"><small>Pares</small><strong id="pares">0/9</strong></div>
+  </div>
+  <button class="btn" id="reiniciar">Reiniciar</button>
+</header>
+
+<main class="tabuleiro" id="tabuleiro" aria-label="Tabuleiro do jogo da memória"></main>
+
+<div id="legenda" aria-live="polite"></div>
+<footer>Faculdade Facionorte · Especializada em Odontologia</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>Parabéns!</h2>
+    <p>Você encontrou todos os pares.</p>
+    <div class="resumo">
+      <div><small>Movimentos</small><strong id="final-mov">0</strong></div>
+      <div><small>Tempo</small><strong id="final-tempo">00:00</strong></div>
+    </div>
+    <button class="btn" id="jogar-de-novo">Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+  const FOTOS = [
+    { src: 'img/foto-1.jpg', nome: 'Pátio com jardim vertical' },
+    { src: 'img/foto-2.jpg', nome: 'Entrada com totens de vestibular' },
+    { src: 'img/foto-3.jpg', nome: 'Fachada com a marca FACIONORTE' },
+    { src: 'img/foto-4.jpg', nome: 'Corredor “Sou Facionorte”' },
+    { src: 'img/foto-5.jpg', nome: 'Biblioteca' },
+    { src: 'img/foto-6.jpg', nome: 'Laboratório de informática' },
+    { src: 'img/foto-7.jpg', nome: 'Prédio e área externa' },
+    { src: 'img/foto-8.jpg', nome: 'Recepção e catraca' },
+    { src: 'img/foto-9.jpg', nome: 'Fachada do prédio' }
+  ];
+
+  const tabuleiro = document.getElementById('tabuleiro');
+  const elMov = document.getElementById('movimentos');
+  const elTempo = document.getElementById('tempo');
+  const elPares = document.getElementById('pares');
+  const elLegenda = document.getElementById('legenda');
+  const overlay = document.getElementById('overlay');
+
+  let primeiro, segundo, travado, movimentos, pares, inicio, timer, iniciado;
+
+  function embaralhar(lista) {
+    for (let i = lista.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [lista[i], lista[j]] = [lista[j], lista[i]];
+    }
+    return lista;
+  }
+
+  function formatar(ms) {
+    const s = Math.floor(ms / 1000);
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function atualizarPlacar() {
+    elMov.textContent = movimentos;
+    elPares.textContent = pares + '/' + FOTOS.length;
+  }
+
+  function iniciarCronometro() {
+    iniciado = true;
+    inicio = Date.now();
+    timer = setInterval(() => { elTempo.textContent = formatar(Date.now() - inicio); }, 250);
+  }
+
+  function pararCronometro() {
+    clearInterval(timer);
+    return Date.now() - inicio;
+  }
+
+  function criarJogo() {
+    clearInterval(timer);
+    primeiro = segundo = null;
+    travado = false;
+    movimentos = 0;
+    pares = 0;
+    iniciado = false;
+    elTempo.textContent = '00:00';
+    elLegenda.textContent = '';
+    overlay.classList.remove('ativo');
+    atualizarPlacar();
+
+    const baralho = embaralhar(FOTOS.concat(FOTOS).map((f, i) => ({ ...f, par: f.src, uid: i })));
+    tabuleiro.innerHTML = '';
+    baralho.forEach(carta => {
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.setAttribute('role', 'button');
+      el.dataset.par = carta.par;
+      el.dataset.nome = carta.nome;
+      el.innerHTML =
+        '<div class="inner">' +
+          '<div class="face back"><img src="img/verso.webp" alt=""></div>' +
+          '<div class="face front"><img src="' + carta.src + '" alt="' + carta.nome + '"></div>' +
+        '</div>';
+      el.addEventListener('click', () => virar(el));
+      tabuleiro.appendChild(el);
+    });
+  }
+
+  function virar(el) {
+    if (travado || el.classList.contains('flipped') || el.classList.contains('matched')) return;
+    if (!iniciado) iniciarCronometro();
+
+    el.classList.add('flipped');
+
+    if (!primeiro) { primeiro = el; return; }
+
+    segundo = el;
+    movimentos++;
+    atualizarPlacar();
+
+    if (primeiro.dataset.par === segundo.dataset.par) {
+      primeiro.classList.replace('flipped', 'matched');
+      segundo.classList.replace('flipped', 'matched');
+      pares++;
+      atualizarPlacar();
+      elLegenda.textContent = '✔ ' + primeiro.dataset.nome;
+      primeiro = segundo = null;
+      if (pares === FOTOS.length) vencer();
+    } else {
+      travado = true;
+      const a = primeiro, b = segundo;
+      setTimeout(() => {
+        a.classList.remove('flipped');
+        b.classList.remove('flipped');
+        primeiro = segundo = null;
+        travado = false;
+      }, 800);
+    }
+  }
+
+  function vencer() {
+    const tempo = pararCronometro();
+    document.getElementById('final-mov').textContent = movimentos;
+    document.getElementById('final-tempo').textContent = formatar(tempo);
+    setTimeout(() => overlay.classList.add('ativo'), 600);
+  }
+
+  document.getElementById('reiniciar').addEventListener('click', criarJogo);
+  document.getElementById('jogar-de-novo').addEventListener('click', criarJogo);
+
+  criarJogo();
+</script>
+</body>
+</html>
